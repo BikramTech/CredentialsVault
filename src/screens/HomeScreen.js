@@ -1,16 +1,17 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import { viewHeightPercent, viewWidthPercent } from '../shared';
-
+import BottomSheet from '../components/BottomSheet';
 import { Colors } from '../constants';
 
-const HomeScreen = props => {
+const HomeScreen = ({isBottomSheetOpen, onToggleBottomSheet}) => {
   return (
     <View style={styles.homeContainer}>
       
       <View style={styles.savedAppsCredListContainer}>
       
       </View>
+      <BottomSheet isOpen={isBottomSheetOpen} toggleBottomSheet={onToggleBottomSheet}/>
     </View>
   );
 };

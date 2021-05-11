@@ -16,6 +16,11 @@ const AppNavigation = () => {
 
     const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
     const [searchBoxTextValue, setSearchBoxTextValue] = useState("");
+    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+    const toggleBottomSheet = () => {
+        setIsBottomSheetOpen(!isBottomSheetOpen);
+    };
 
     const toggleSearch = () => {
         const isOpen = !isSearchBoxOpen;
@@ -33,12 +38,12 @@ const AppNavigation = () => {
 
     const headerOptions = {
         title: AppTitle,
-        header: isSearchBoxOpen ? () =>  <HeaderSearchBox searchBoxTextValue={searchBoxTextValue} onClearSearchBox={() => clearSearchBox()} onToggleSearch={() => toggleSearch()} onSearchBoxTextChange={(value) => onSearchBoxTextChange(value)} /> : React.ReactNode,
+        header: isSearchBoxOpen? () =>  <HeaderSearchBox searchBoxTextValue={searchBoxTextValue} onClearSearchBox={() => clearSearchBox()} onToggleSearch={() => toggleSearch()} onSearchBoxTextChange={(value) => onSearchBoxTextChange(value)} /> : React.ReactNode,
         headerTitleAlign: "left",
         headerStyle: { backgroundColor: Colors.black },
-        headerRight: () => <HeaderRightSection onToggleSearch={() => toggleSearch()} />,
+        headerRight: !isBottomSheetOpen? () => <HeaderRightSection  onToggleSearch={() => toggleSearch()} onToggleBottomSheet={() => toggleBottomSheet()} /> : React.ReactNode,
         headerTintColor: Colors.white,
-        headerStatusBarHeight: viewHeightPercent(8),
+        headerStatusBarHeight: viewHeightPercent(5),
         headerTitleStyle: { fontSize: viewHeightPercent(2.1), fontFamily: 'HelveticaNeue-Medium'  }
     };
 
@@ -47,7 +52,7 @@ const AppNavigation = () => {
             <Navigator initialRouteName={ScreenNames.home}>
                 <Screen
                     name={ScreenNames.home}
-                    component={Home}
+                    component={Home.bind(this,{isBottomSheetOpen, onToggleBottomSheet: toggleBottomSheet})}
                     options={headerOptions}
                 >
                 </Screen>
