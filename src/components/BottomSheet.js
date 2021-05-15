@@ -5,7 +5,7 @@ import { View, Animated, StyleSheet, Dimensions, TouchableOpacity, Text, StatusB
 import { Colors } from '../constants';
 import { viewHeightPercent, viewWidthPercent } from '../shared/Utils'
 
-const BottomSheet = ({ isOpen, toggleBottomSheet }) => {
+const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
 
     useEffect(() => {
 
@@ -77,9 +77,8 @@ const BottomSheet = ({ isOpen, toggleBottomSheet }) => {
             <Animated.View style={[StyleSheet.absoluteFill, styles.cover, backdrop]} />
             <View style={[styles.sheet]}>
                 <Animated.View style={[styles.popup, slideUp]}>
-                <View >
-                 <Text>hello</Text>
-                 </View>
+                
+                <ContainerComponent />
 
                 <View style={styles.buttonsContainer}>
 
@@ -114,7 +113,7 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.lightGray,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        height: viewHeightPercent(80),
+        height: viewHeightPercent(85),
         display:"flex",
         borderRadius: viewHeightPercent(5),
         justifyContent:'space-between'

@@ -3,7 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
 import { viewHeightPercent, viewWidthPercent } from '../shared';
-import BottomSheet from '../components/BottomSheet';
+import { AddCredentialsForm, BottomSheet} from '../components';
 import { Colors } from '../constants';
 
 const HomeScreen = ({isBottomSheetOpen, onToggleBottomSheet}) => {
@@ -15,7 +15,7 @@ const HomeScreen = ({isBottomSheetOpen, onToggleBottomSheet}) => {
       <View style={styles.savedAppsCredListContainer}>
       
       </View>
-      <BottomSheet isOpen={isBottomSheetOpen} toggleBottomSheet={onToggleBottomSheet}/>
+      <BottomSheet isOpen={isBottomSheetOpen} toggleBottomSheet={onToggleBottomSheet} ContainerComponent={AddCredentialsForm}/>
       </LinearGradient>
   );
 };
