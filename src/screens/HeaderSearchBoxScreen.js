@@ -9,17 +9,17 @@ import { viewHeightPercent } from '../shared/Utils';
 const HeaderSearchBoxScreen = ({ searchBoxTextValue, onClearSearchBox, onToggleSearch, onSearchBoxTextChange }) => {
 
 
-    const CrossIcon = () => (<TouchableOpacity onPress={onClearSearchBox}><CloseSquare primaryColor="white" /></TouchableOpacity>)
+    const CrossIcon = () => (<TouchableOpacity onPress={onClearSearchBox}><CloseSquare primaryColor={Colors.primary} /></TouchableOpacity>)
 
     const CancelButton = () => (
         <TouchableOpacity onPress={onToggleSearch}><Text style={{ color: Colors.white }}>Cancel</Text></TouchableOpacity>
     );
 
     return (
-        <SafeAreaView style={{ backgroundColor: Colors.black, borderBottomColor:"#545454", borderBottomWidth: 1 }}>
+        <SafeAreaView style={{ backgroundColor: Colors.primary, borderBottomColor:"#545454", borderBottomWidth: 1 }}>
             <View style={styles.searchBoxContainer}>
                 <View style={styles.searchIconContainer}>
-                    <Search primaryColor="white" />
+                    <Search primaryColor={Colors.primary} />
                     <TextInput onChangeText={onSearchBoxTextChange} blurOnSubmit={false} value={searchBoxTextValue} placeholder="Search" placeholderTextColor={"white"} style={styles.searchBoxInput} />
                     {searchBoxTextValue ? CrossIcon() : React.ReactNode}
                 </View>
@@ -34,10 +34,11 @@ const HeaderSearchBoxScreen = ({ searchBoxTextValue, onClearSearchBox, onToggleS
 const styles = StyleSheet.create({
     
     searchBoxContainer: {
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.primary,
         display: 'flex',
         padding: viewHeightPercent(1.5),
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent:'center'
     },
 
     searchIconContainer: {
@@ -45,13 +46,13 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         flex: .9,
         justifyContent: 'space-between',
-        backgroundColor: Colors.graphiteBlack,
+        backgroundColor: Colors.white,
         padding: viewHeightPercent(1),
         borderRadius: viewHeightPercent(2)
     },
 
     searchBoxInput: {
-        color: Colors.white,
+        color: Colors.black,
         flex: .9 
     },
 

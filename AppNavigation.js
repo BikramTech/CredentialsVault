@@ -40,7 +40,7 @@ const AppNavigation = () => {
         title: AppTitle,
         header: isSearchBoxOpen? () =>  <HeaderSearchBox searchBoxTextValue={searchBoxTextValue} onClearSearchBox={() => clearSearchBox()} onToggleSearch={() => toggleSearch()} onSearchBoxTextChange={(value) => onSearchBoxTextChange(value)} /> : React.ReactNode,
         headerTitleAlign: "left",
-        headerStyle: { backgroundColor: Colors.black },
+        headerStyle: { backgroundColor: Colors.primary },
         headerRight: !isBottomSheetOpen? () => <HeaderRightSection  onToggleSearch={() => toggleSearch()} onToggleBottomSheet={() => toggleBottomSheet()} /> : React.ReactNode,
         headerTintColor: Colors.white,
         headerStatusBarHeight: viewHeightPercent(5),

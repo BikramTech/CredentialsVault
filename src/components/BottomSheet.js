@@ -1,6 +1,6 @@
 
 import React, { useEffect } from 'react';
-import { View, Animated, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native';
+import { View, Animated, StyleSheet, Dimensions, TouchableOpacity, Text, StatusBar } from 'react-native';
 
 import { Colors } from '../constants';
 import { viewHeightPercent, viewWidthPercent } from '../shared/Utils'
@@ -64,8 +64,12 @@ const BottomSheet = ({ isOpen, toggleBottomSheet }) => {
         ],
     };
 
-    const CloseButton = () => <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
+    const CloseButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={handleClose}>
         <Text style={styles.closeBtnText}>Close</Text>
+    </TouchableOpacity>
+
+    const SaveButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={handleClose}>
+    <Text style={styles.closeBtnText}>Save</Text>
     </TouchableOpacity>
 
     return (
@@ -73,11 +77,15 @@ const BottomSheet = ({ isOpen, toggleBottomSheet }) => {
             <Animated.View style={[StyleSheet.absoluteFill, styles.cover, backdrop]} />
             <View style={[styles.sheet]}>
                 <Animated.View style={[styles.popup, slideUp]}>
-                <View style={{height: "85%"}}>
-                 
+                <View >
+                 <Text>hello</Text>
                  </View>
-                <View style={{height: "15%"}}>
+
+                <View style={styles.buttonsContainer}>
+
+                <SaveButton />
                  <CloseButton />
+                 
                  </View>
 
                 </Animated.View>
@@ -103,24 +111,33 @@ const styles = StyleSheet.create({
     },
 
     popup: {
-        backgroundColor: "#FFF",
+        backgroundColor: Colors.lightGray,
         borderTopLeftRadius: 20,
         borderTopRightRadius: 20,
-        minHeight: Dimensions.get("window").height / 1.2,
-        display:"flex"
+        height: viewHeightPercent(80),
+        display:"flex",
+        borderRadius: viewHeightPercent(5),
+        justifyContent:'space-between'
+
     },
 
-    closeButton: {
-        backgroundColor: Colors.black,
+    buttonsContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent:'space-evenly',
+        alignItems: 'flex-start',
+        paddingBottom: viewHeightPercent(2)
+    },
+
+    bottomSheetButtons: {
+        
         padding: viewHeightPercent(2),
-        margin: viewWidthPercent(5),
-        borderRadius: viewHeightPercent(1.5),
         alignItems: 'center',
         justifyContent:'center'
     },
 
     closeBtnText: {
-        color: "white",
+        color: Colors.primary,
         fontSize: viewHeightPercent(2),
         fontWeight: 'bold'
     }

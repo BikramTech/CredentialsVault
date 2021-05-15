@@ -1,18 +1,22 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+
 import { viewHeightPercent, viewWidthPercent } from '../shared';
 import BottomSheet from '../components/BottomSheet';
 import { Colors } from '../constants';
 
 const HomeScreen = ({isBottomSheetOpen, onToggleBottomSheet}) => {
   return (
-    <View style={styles.homeContainer}>
+    
+      <LinearGradient colors={['#755bea', '#ff72c0', '#755bea', '#ff72c0']} style={styles.homeContainer}>
+
       
       <View style={styles.savedAppsCredListContainer}>
       
       </View>
       <BottomSheet isOpen={isBottomSheetOpen} toggleBottomSheet={onToggleBottomSheet}/>
-    </View>
+      </LinearGradient>
   );
 };
 
@@ -27,7 +31,7 @@ const styles = StyleSheet.create({
   savedAppsCredListContainer: {
     display: 'flex',
     flex: .8,
-    backgroundColor: "#E1E1E1",
+    backgroundColor: Colors.white,
     borderTopLeftRadius: viewHeightPercent(5),
     borderTopRightRadius: viewHeightPercent(5),
   }
