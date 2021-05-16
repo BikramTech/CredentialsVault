@@ -43,7 +43,7 @@ const AppNavigation = () => {
         headerStyle: { backgroundColor: Colors.primary },
         headerRight: !isBottomSheetOpen? () => <HeaderRightSection  onToggleSearch={() => toggleSearch()} onToggleBottomSheet={() => toggleBottomSheet()} /> : React.ReactNode,
         headerTintColor: Colors.white,
-        headerStatusBarHeight: viewHeightPercent(5),
+        headerStatusBarStyle: {backgroundColor: Colors.primary},
         headerTitleStyle: { fontSize: viewHeightPercent(2.1), fontFamily: 'HelveticaNeue-Medium'  }
     };
 

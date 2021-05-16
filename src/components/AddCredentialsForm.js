@@ -18,14 +18,14 @@ const AddCredentialsForm = () => {
         setValue("");
     };
 
-    const MinusIcon = (onClear) => (<TouchableOpacity onPress={onClear}>
-    <CloseSquare primaryColor={Colors.primary} />
+    const MinusIcon = (onClear, inputValue) => (<TouchableOpacity  onPress={onClear}>
+    <CloseSquare style={{display: inputValue? 'flex': 'none'}} primaryColor={Colors.primary} />
     </TouchableOpacity>)
 
     const TextInputControl = ({ inputIcon, inputValue, onValueChange, placeHolderText, onClear}) => <View style={styles.controlIconContainer}>
         {inputIcon()}
         <TextInput onChangeText={onValueChange} blurOnSubmit={true} value={inputValue} placeholder={placeHolderText} placeholderTextColor="gray" style={styles.textInputControl} />
-        {inputValue ? MinusIcon(onClear) : React.ReactNode}
+        {MinusIcon(onClear, inputValue)}
     </View>
 
     return <View style={styles.formContainer}>
@@ -85,7 +85,9 @@ const styles = StyleSheet.create({
 
     formHeaderText: {
        fontWeight: 'bold',
-       fontSize: viewHeightPercent(2)
+       fontSize: viewHeightPercent(2),
+       alignSelf:'center',
+       color: Colors.white
     },
 
     textInputControl: {
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
     },
 
     formControlsContainer: {
-        paddingTop:viewHeightPercent(10)
+        paddingTop:viewHeightPercent(2)
     }
 })
 

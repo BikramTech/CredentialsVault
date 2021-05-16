@@ -2,8 +2,10 @@
 import React, { useEffect } from 'react';
 import { View, Animated, StyleSheet, Dimensions, TouchableOpacity, Text, StatusBar } from 'react-native';
 
+import LinearGradient from 'react-native-linear-gradient';
+
 import { Colors } from '../constants';
-import { viewHeightPercent, viewWidthPercent } from '../shared/Utils'
+import { viewHeightPercent } from '../shared/Utils'
 
 const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
 
@@ -76,9 +78,12 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
         <>
             <Animated.View style={[StyleSheet.absoluteFill, styles.cover, backdrop]} />
             <View style={[styles.sheet]}>
+            
+
                 <Animated.View style={[styles.popup, slideUp]}>
-                
+                <LinearGradient colors={[ Colors.primary, Colors.secondary]} style={styles.controlsContainer} >
                 <ContainerComponent />
+
 
                 <View style={styles.buttonsContainer}>
 
@@ -86,7 +91,8 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
                  <CloseButton />
                  
                  </View>
-
+                 
+</LinearGradient>
                 </Animated.View>
             </View>
         </>
@@ -110,12 +116,8 @@ const styles = StyleSheet.create({
     },
 
     popup: {
-        backgroundColor: Colors.lightGray,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
         height: viewHeightPercent(85),
         display:"flex",
-        borderRadius: viewHeightPercent(5),
         justifyContent:'space-between'
 
     },
@@ -124,21 +126,26 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent:'space-evenly',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         paddingBottom: viewHeightPercent(2)
+        
     },
 
     bottomSheetButtons: {
-        
         padding: viewHeightPercent(2),
         alignItems: 'center',
         justifyContent:'center'
     },
 
     closeBtnText: {
-        color: Colors.primary,
+        color: Colors.white,
         fontSize: viewHeightPercent(2),
         fontWeight: 'bold'
+    },
+
+    controlsContainer: {
+        flex:1, borderTopLeftRadius: viewHeightPercent(15), justifyContent: 'space-between',
+        borderBottomRightRadius: viewHeightPercent(15)
     }
 });
 export default BottomSheet;

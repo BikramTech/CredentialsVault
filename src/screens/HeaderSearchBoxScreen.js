@@ -9,7 +9,7 @@ import { viewHeightPercent } from '../shared/Utils';
 const HeaderSearchBoxScreen = ({ searchBoxTextValue, onClearSearchBox, onToggleSearch, onSearchBoxTextChange }) => {
 
 
-    const CrossIcon = () => (<TouchableOpacity onPress={onClearSearchBox}><CloseSquare primaryColor={Colors.primary} /></TouchableOpacity>)
+    const CrossIcon = () => (<TouchableOpacity onPress={onClearSearchBox}><CloseSquare style={{display: searchBoxTextValue? 'flex':'none'}} primaryColor={Colors.primary} size="small" /></TouchableOpacity>)
 
     const CancelButton = () => (
         <TouchableOpacity onPress={onToggleSearch}><Text style={{ color: Colors.white }}>Cancel</Text></TouchableOpacity>
@@ -19,9 +19,9 @@ const HeaderSearchBoxScreen = ({ searchBoxTextValue, onClearSearchBox, onToggleS
         <SafeAreaView style={{ backgroundColor: Colors.primary, borderBottomColor:"#545454", borderBottomWidth: 1 }}>
             <View style={styles.searchBoxContainer}>
                 <View style={styles.searchIconContainer}>
-                    <Search primaryColor={Colors.primary} />
-                    <TextInput onChangeText={onSearchBoxTextChange} blurOnSubmit={false} value={searchBoxTextValue} placeholder="Search" placeholderTextColor={"white"} style={styles.searchBoxInput} />
-                    {searchBoxTextValue ? CrossIcon() : React.ReactNode}
+                    <Search primaryColor={Colors.primary} size="small"/>
+                    <TextInput onChangeText={onSearchBoxTextChange} blurOnSubmit={false} value={searchBoxTextValue} placeholder="Search" style={styles.searchBoxInput} />
+                    {CrossIcon()}
                 </View>
                 <View style={styles.cancelButtonContainer}>
                     <CancelButton />
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         flex: .9,
         justifyContent: 'space-between',
         backgroundColor: Colors.white,
-        padding: viewHeightPercent(1),
+        padding: '3%',
         borderRadius: viewHeightPercent(2)
     },
 
