@@ -1,5 +1,6 @@
 const ScreenNames ={
-    home: "Home"
+    home: "Home",
+    appSearch: "AppSearch"
 }
 
 export default ScreenNames;

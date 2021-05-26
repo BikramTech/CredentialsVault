@@ -5,7 +5,7 @@ import { View, Animated, StyleSheet, Dimensions, TouchableOpacity, Text, StatusB
 import LinearGradient from 'react-native-linear-gradient';
 
 import { Colors } from '../constants';
-import { viewHeightPercent } from '../shared/Utils'
+import { viewHeightPercent, viewWidthPercent } from '../shared/Utils'
 
 const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
 
@@ -118,7 +118,8 @@ const styles = StyleSheet.create({
     popup: {
         height: viewHeightPercent(85),
         display:"flex",
-        justifyContent:'space-between'
+        justifyContent:'space-between',
+        margin: viewWidthPercent(1)
 
     },
 

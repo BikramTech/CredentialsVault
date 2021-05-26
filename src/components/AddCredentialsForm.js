@@ -1,73 +1,100 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
 
-import {  User, Wallet, Password, CloseSquare } from 'react-native-iconly';
+import { useNavigation } from '@react-navigation/native';
+import { User, Wallet, Password, CloseSquare, Search } from 'react-native-iconly';
 
 import { viewHeightPercent, viewWidthPercent } from '../shared/Utils';
-import { Colors } from '../constants';
+import { Colors, ScreenNames } from '../constants';
 
 const AddCredentialsForm = () => {
 
-    const [ name, setName] = useState("");
-    const [ emailOrUserName, setEmailOrUserName] = useState("");
-    const [ password, setPassword] = useState("");
-    const [ confirmPassword, setConfirmPassword] = useState("");
+    const [name, setName] = useState("");
+    const [emailOrUserName, setEmailOrUserName] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const navigation = useNavigation();
 
 
     const clearValue = (setValue) => {
         setValue("");
     };
 
-    const MinusIcon = (onClear, inputValue) => (<TouchableOpacity  onPress={onClear}>
-    <CloseSquare style={{display: inputValue? 'flex': 'none'}} primaryColor={Colors.primary} />
+    const MinusIcon = (onClear, inputValue) => (<TouchableOpacity onPress={onClear}>
+        <CloseSquare style={{ display: inputValue ? 'flex' : 'none' }} primaryColor={Colors.primary} size="small" />
     </TouchableOpacity>)
 
-    const TextInputControl = ({ inputIcon, inputValue, onValueChange, placeHolderText, onClear}) => <View style={styles.controlIconContainer}>
+    const TextInputControl = ({ inputIcon, inputValue, onValueChange, placeHolderText, onClear }) => <View style={styles.controlIconContainer}>
         {inputIcon()}
         <TextInput onChangeText={onValueChange} blurOnSubmit={true} value={inputValue} placeholder={placeHolderText} placeholderTextColor="gray" style={styles.textInputControl} />
         {MinusIcon(onClear, inputValue)}
     </View>
 
     return <View style={styles.formContainer}>
-         
-         <Text style={styles.formHeaderText}> Save Credentials</Text>
 
-         <KeyboardAvoidingView style={styles.formControlsContainer}>
+        <Text style={styles.formHeaderText}>Save Credentials</Text>
 
-        
-         {
-             TextInputControl(
-             {inputIcon: () => <Wallet set="bold" primaryColor={Colors.primary}/>,
-              inputValue: name,
-              onValueChange: (value) => setName(value),
-              placeHolderText: 'Credentials Name',
-              onClear:() => setName("")
-              })
-         }
-         
+       <TouchableOpacity onPress={() => navigation.navigate(ScreenNames.appSearch)} style={{backgroundColor: Colors.white, padding: '3%', borderRadius: viewHeightPercent(2), display:'flex', flexDirection:'row', alignItems: 'center', marginTop: viewHeightPercent(15)}}>
+       <View ><Search  set="bold" primaryColor={Colors.primary} size="small" /></View>
+       <View style={{alignItems: 'center', flex: 1}}><Text style={{color: '#9D9D9D'}} >Search your app</Text></View>
+       </TouchableOpacity>
 
-         
-         {TextInputControl({inputIcon: () => <User set="bold" primaryColor={Colors.primary}/>, inputValue: emailOrUserName, onValueChange: (value) => setEmailOrUserName(value), placeHolderText: 'Email or username', onClear:() => setEmailOrUserName("")})}
-       
+        <KeyboardAvoidingView style={styles.formControlsContainer}>
 
-         
-         {TextInputControl({inputIcon: () => <Password set="bold" primaryColor={Colors.primary}/>, inputValue: password, onValueChange: (value) => setPassword(value), placeHolderText: 'Password', onClear:() => setPassword("")})}
-         
+            {
+                TextInputControl(
+                    {
+                        inputIcon: () => <Wallet set="bold" primaryColor={Colors.primary} size="small" />,
+                        inputValue: name,
+                        onValueChange: (value) => setName(value),
+                        placeHolderText: 'Credentials Name',
+                        onClear: () => setName("")
+                    })
+            }
 
-         
-         {TextInputControl({inputIcon: () => <Password set="bold" primaryColor={Colors.primary}/>, inputValue: confirmPassword, onValueChange: (value) => setConfirmPassword(value), placeHolderText: 'Confirm password', onClear:() => setConfirmPassword("")})}
-         
+            {
+                TextInputControl(
+                    {
+                        inputIcon: () => <User set="bold" primaryColor={Colors.primary} size="small" />,
+                        inputValue: emailOrUserName,
+                        onValueChange: (value) => setEmailOrUserName(value),
+                        placeHolderText: 'Email or username',
+                        onClear: () => setEmailOrUserName("")
+                    })
+            }
 
-         </KeyboardAvoidingView>
-    
-         
+            {
+                TextInputControl(
+                    {
+                        inputIcon: () => <Password set="bold" primaryColor={Colors.primary} size="small" />,
+                        inputValue: password,
+                        onValueChange: (value) => setPassword(value),
+                        placeHolderText: 'Password',
+                        onClear: () => setPassword("")
+                    })
+            }
+
+            {
+                TextInputControl(
+                    {
+                        inputIcon: () => <Password set="bold" primaryColor={Colors.primary} size="small" />,
+                        inputValue: confirmPassword,
+                        onValueChange: (value) => setConfirmPassword(value),
+                        placeHolderText: 'Confirm password',
+                        onClear: () => setConfirmPassword("")
+                    })
+            }
+
+        </KeyboardAvoidingView>
+
+
 
     </View>
 }
 
 const styles = StyleSheet.create({
 
-    formContainer:{
+    formContainer: {
         paddingTop: viewHeightPercent(5),
         marginHorizontal: viewWidthPercent(4),
         overflow: 'scroll'
@@ -84,10 +111,10 @@ const styles = StyleSheet.create({
     },
 
     formHeaderText: {
-       fontWeight: 'bold',
-       fontSize: viewHeightPercent(2),
-       alignSelf:'center',
-       color: Colors.white
+        fontWeight: 'bold',
+        fontSize: viewHeightPercent(2),
+        alignSelf: 'center',
+        color: Colors.white
     },
 
     textInputControl: {
@@ -96,7 +123,7 @@ const styles = StyleSheet.create({
     },
 
     formControlsContainer: {
-        paddingTop:viewHeightPercent(2)
+        paddingTop: viewHeightPercent(1)
     }
 })
 

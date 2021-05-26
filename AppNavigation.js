@@ -7,7 +7,7 @@ import { displayName as AppTitle } from './app.json';
 import { ScreenNames, Colors } from './src/constants';
 import { viewHeightPercent } from './src/shared';
 
-import { Home, HeaderRightSection, HeaderSearchBox } from './src/components';
+import { Home, HeaderRightSection, HeaderSearchBox, AppSearch } from './src/components';
 
 
 const AppNavigation = () => {
@@ -36,7 +36,7 @@ const AppNavigation = () => {
         setSearchBoxTextValue("");
     };
 
-    const headerOptions = {
+    const homeScreenHeaderOptions = {
         title: AppTitle,
         header: isSearchBoxOpen? () =>  <HeaderSearchBox searchBoxTextValue={searchBoxTextValue} onClearSearchBox={() => clearSearchBox()} onToggleSearch={() => toggleSearch()} onSearchBoxTextChange={(value) => onSearchBoxTextChange(value)} /> : React.ReactNode,
         headerTitleAlign: "left",
@@ -47,15 +47,30 @@ const AppNavigation = () => {
         headerTitleStyle: { fontSize: viewHeightPercent(2.1), fontFamily: 'HelveticaNeue-Medium'  }
     };
 
+    const appSearchHeaderOptions = {
+        header: () => <HeaderSearchBox searchBoxTextValue={searchBoxTextValue} onClearSearchBox={() => clearSearchBox()} onToggleSearch={() => toggleSearch()} onSearchBoxTextChange={(value) => onSearchBoxTextChange(value)} />,
+        headerStyle: { backgroundColor: Colors.primary },
+        headerStatusBarStyle: {backgroundColor: Colors.primary}
+    }
+
     return (
         <NavigationContainer>
             <Navigator initialRouteName={ScreenNames.home}>
+            
                 <Screen
                     name={ScreenNames.home}
                     component={Home.bind(this,{isBottomSheetOpen, onToggleBottomSheet: toggleBottomSheet})}
-                    options={headerOptions}
+                    options={homeScreenHeaderOptions}
                 >
                 </Screen>
+
+                <Screen
+                    name={ScreenNames.appSearch}
+                    component={AppSearch.bind(this)}
+                    options={appSearchHeaderOptions}
+                >
+                </Screen>
+
             </Navigator>
         </NavigationContainer>
     )

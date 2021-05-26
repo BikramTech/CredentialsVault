@@ -8,6 +8,8 @@ import { Colors } from '../constants';
 
 const HomeScreen = ({isBottomSheetOpen, onToggleBottomSheet}) => {
 
+  
+
   const NoDataFound = () => <ImageBackground
   style={styles.noDataFoundImageIcon}
   
@@ -49,8 +51,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: viewHeightPercent(20),
     borderBottomLeftRadius: viewHeightPercent(20),
     paddingTop: viewHeightPercent(2),
-    marginHorizontal: viewWidthPercent(1),
-    marginVertical: viewWidthPercent(1)
+    margin: viewWidthPercent(1)
   },
 
   upperSection: {
