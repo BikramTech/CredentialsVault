@@ -81,7 +81,6 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
             
 
                 <Animated.View style={[styles.popup, slideUp]}>
-                <LinearGradient colors={[ Colors.primary, Colors.secondary]} style={styles.controlsContainer} >
                 <ContainerComponent />
 
 
@@ -92,7 +91,7 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
                  
                  </View>
                  
-</LinearGradient>
+
                 </Animated.View>
             </View>
         </>
@@ -103,7 +102,7 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
 const styles = StyleSheet.create({
 
     cover: {
-        backgroundColor: "rgba(0,0,0,.5)",
+        backgroundColor: "rgba(0,0,0,.5)"
     },
 
     sheet: {
@@ -112,15 +111,17 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: "100%",
-        justifyContent: "flex-end",
+        justifyContent: "flex-end"
     },
 
     popup: {
         height: viewHeightPercent(85),
         display:"flex",
         justifyContent:'space-between',
-        margin: viewWidthPercent(1)
-
+        margin: viewWidthPercent(1),
+        backgroundColor:'white',
+        borderTopLeftRadius: viewHeightPercent(20),
+        borderBottomRightRadius: viewHeightPercent(10),
     },
 
     buttonsContainer: {
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     },
 
     closeBtnText: {
-        color: Colors.white,
+        color: Colors.primary,
         fontSize: viewHeightPercent(2),
         fontWeight: 'bold'
     },

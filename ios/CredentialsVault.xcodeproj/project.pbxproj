@@ -13,6 +13,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2C4F1CFA04055A31C09267CF /* libPods-CredentialsVault-CredentialsVaultTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9463AB05004BAFE5A574D135 /* libPods-CredentialsVault-CredentialsVaultTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		BF02BE8C265ED99400195918 /* www in Resources */ = {isa = PBXBuildFile; fileRef = BF02BE8B265ED99400195918 /* www */; };
 		E15C1F009FA1041B11359C19 /* libPods-CredentialsVault.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9F7450CC63D3CCF99EA9ACDB /* libPods-CredentialsVault.a */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +43,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CredentialsVault/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9463AB05004BAFE5A574D135 /* libPods-CredentialsVault-CredentialsVaultTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CredentialsVault-CredentialsVaultTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F7450CC63D3CCF99EA9ACDB /* libPods-CredentialsVault.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CredentialsVault.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF02BE8B265ED99400195918 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = CredentialsVault/www; sourceTree = "<group>"; };
 		E1136A678F700FB0F7DD1987 /* Pods-CredentialsVault-CredentialsVaultTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CredentialsVault-CredentialsVaultTests.release.xcconfig"; path = "Target Support Files/Pods-CredentialsVault-CredentialsVaultTests/Pods-CredentialsVault-CredentialsVaultTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -86,6 +88,7 @@
 		13B07FAE1A68108700A75B9A /* CredentialsVault */ = {
 			isa = PBXGroup;
 			children = (
+				BF02BE8B265ED99400195918 /* www */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -242,6 +245,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF02BE8C265ED99400195918 /* www in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 			);

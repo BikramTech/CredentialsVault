@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from "@react-navigation/stack";
 
 import { displayName as AppTitle } from './app.json';
@@ -17,6 +17,8 @@ const AppNavigation = () => {
     const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
     const [searchBoxTextValue, setSearchBoxTextValue] = useState("");
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+    const [isAppSearchClosed, setIsAppSearchClosed] = useState(true);
 
     const toggleBottomSheet = () => {
         setIsBottomSheetOpen(!isBottomSheetOpen);
@@ -36,6 +38,10 @@ const AppNavigation = () => {
         setSearchBoxTextValue("");
     };
 
+    const toggleAppSearch = () => {
+        setIsAppSearchClosed(!isAppSearchClosed);
+    }
+
     const homeScreenHeaderOptions = {
         title: AppTitle,
         header: isSearchBoxOpen? () =>  <HeaderSearchBox searchBoxTextValue={searchBoxTextValue} onClearSearchBox={() => clearSearchBox()} onToggleSearch={() => toggleSearch()} onSearchBoxTextChange={(value) => onSearchBoxTextChange(value)} /> : React.ReactNode,
@@ -47,11 +53,11 @@ const AppNavigation = () => {
         headerTitleStyle: { fontSize: viewHeightPercent(2.1), fontFamily: 'HelveticaNeue-Medium'  }
     };
 
-    const appSearchHeaderOptions = {
-        header: () => <HeaderSearchBox searchBoxTextValue={searchBoxTextValue} onClearSearchBox={() => clearSearchBox()} onToggleSearch={() => toggleSearch()} onSearchBoxTextChange={(value) => onSearchBoxTextChange(value)} />,
-        headerStyle: { backgroundColor: Colors.primary },
-        headerStatusBarStyle: {backgroundColor: Colors.primary}
-    }
+    // const appSearchHeaderOptions = {
+    //     header: HeaderSearchBox.bind(this, {searchBoxTextValue: searchBoxTextValue, onClearSearchBox: clearSearchBox, onToggleSearch: toggleAppSearch, onSearchBoxTextChange: (value) => onSearchBoxTextChange(value)}),
+    //     headerStyle: { backgroundColor: Colors.primary },
+    //     headerStatusBarStyle: {backgroundColor: Colors.primary}
+    // }
 
     return (
         <NavigationContainer>
@@ -67,7 +73,9 @@ const AppNavigation = () => {
                 <Screen
                     name={ScreenNames.appSearch}
                     component={AppSearch.bind(this)}
-                    options={appSearchHeaderOptions}
+                    options={{
+                        headerShown: false
+                    }}
                 >
                 </Screen>
 
@@ -76,4 +84,4 @@ const AppNavigation = () => {
     )
 }
 
-export default AppNavigation;
+export default React.memo(AppNavigation);

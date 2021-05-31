@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image ,KeyboardAvoidingView } from 'react-native';
 
-import { useNavigation } from '@react-navigation/native';
-import { User, Wallet, Password, CloseSquare, Search } from 'react-native-iconly';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { User, Wallet, Password, CloseSquare, Image2 } from 'react-native-iconly';
 
 import { viewHeightPercent, viewWidthPercent } from '../shared/Utils';
 import { Colors, ScreenNames } from '../constants';
@@ -13,8 +13,36 @@ const AddCredentialsForm = () => {
     const [emailOrUserName, setEmailOrUserName] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [selectedApp, setSelectedApp] = useState("");
     const navigation = useNavigation();
+    const route = useRoute();
 
+    useEffect(() => {
+
+        navigation.addListener("focus", () => {
+            const homeRouteParams = getHomeRouteParams();
+            
+            if (homeRouteParams) {
+                debugger;
+                setSelectedApp(homeRouteParams);
+            }
+        })
+
+        return () => {
+            navigation.removeListener("focus");
+            clearHomeRouteParams();
+            setSelectedApp("");
+            console.log("Add Bottomsheet Closed!")
+        };
+    }, []);
+
+    let getHomeRouteParams = () => {
+        return navigation.dangerouslyGetState().routes.find(route => route.name === ScreenNames.home).params;
+    }
+
+    let clearHomeRouteParams = () => {
+         navigation.dangerouslyGetState().routes.find(route => route.name === ScreenNames.home).params = "";
+    }
 
     const clearValue = (setValue) => {
         setValue("");
@@ -31,20 +59,21 @@ const AddCredentialsForm = () => {
     </View>
 
     return <View style={styles.formContainer}>
-
         <Text style={styles.formHeaderText}>Save Credentials</Text>
-
-       <TouchableOpacity onPress={() => navigation.navigate(ScreenNames.appSearch)} style={{backgroundColor: Colors.white, padding: '3%', borderRadius: viewHeightPercent(2), display:'flex', flexDirection:'row', alignItems: 'center', marginTop: viewHeightPercent(15)}}>
-       <View ><Search  set="bold" primaryColor={Colors.primary} size="small" /></View>
-       <View style={{alignItems: 'center', flex: 1}}><Text style={{color: '#9D9D9D'}} >Search your app</Text></View>
-       </TouchableOpacity>
+        { {selectedApp} && <Image source={{ uri: selectedApp.Logo }} style={styles.selectedAppLogo} resizeMode='contain'></Image>}
+        
+        { {selectedApp} && <Text style={styles.selectedAppName}>{selectedApp.DisplayName}</Text>}
+        <TouchableOpacity onPress={() => navigation.navigate(ScreenNames.appSearch)} style={{ backgroundColor: Colors.primary, padding: '3%', borderRadius: viewHeightPercent(2), display: 'flex', flexDirection: 'row', alignItems: 'center', marginTop: '4%', borderColor: Colors.lightGray, borderWidth: 2 }}>
+            <View style={{ alignItems: 'center', flex: 1 , flexDirection:'row', justifyContent:'center'}}>
+            <Image2 set="bold" primaryColor={Colors.white} size="small" /><Text style={{ color: Colors.white, fontSize: viewHeightPercent(2) }} > {selectedApp ? 'Choose another logo': 'Choose credentials logo'}</Text></View>
+        </TouchableOpacity>
 
         <KeyboardAvoidingView style={styles.formControlsContainer}>
 
             {
                 TextInputControl(
                     {
-                        inputIcon: () => <Wallet set="bold" primaryColor={Colors.primary} size="small" />,
+                        inputIcon: () => !selectedApp ? <Wallet set="bold" primaryColor={Colors.primary} size="small" />: <Image source={{ uri: selectedApp.Logo }} style={styles.credentialsFieldLogo} resizeMode='contain'></Image>,
                         inputValue: name,
                         onValueChange: (value) => setName(value),
                         placeHolderText: 'Credentials Name',
@@ -58,7 +87,7 @@ const AddCredentialsForm = () => {
                         inputIcon: () => <User set="bold" primaryColor={Colors.primary} size="small" />,
                         inputValue: emailOrUserName,
                         onValueChange: (value) => setEmailOrUserName(value),
-                        placeHolderText: 'Email or username',
+                        placeHolderText: 'Email, username or mobile number',
                         onClear: () => setEmailOrUserName("")
                     })
             }
@@ -107,14 +136,16 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
         padding: viewHeightPercent(1.5),
         borderRadius: viewHeightPercent(2),
-        marginTop: viewHeightPercent(2)
+        marginTop: viewHeightPercent(2),
+        borderColor: Colors.lightGray,
+        borderWidth: 2
     },
 
     formHeaderText: {
         fontWeight: 'bold',
-        fontSize: viewHeightPercent(2),
+        fontSize: viewHeightPercent(2.5),
         alignSelf: 'center',
-        color: Colors.white
+        color: Colors.black
     },
 
     textInputControl: {
@@ -124,6 +155,26 @@ const styles = StyleSheet.create({
 
     formControlsContainer: {
         paddingTop: viewHeightPercent(1)
+    },
+
+    selectedAppLogo: {
+        height: viewHeightPercent(5),
+        width: viewHeightPercent(5),
+        borderRadius: (viewHeightPercent(5) / 2),
+        alignSelf: 'center',
+        marginTop: "10%"
+    },
+
+    selectedAppName: {
+        fontWeight:'500',
+        alignSelf:'center',
+        marginTop: "4%"
+    },
+
+    credentialsFieldLogo: {
+        height: viewHeightPercent(2),
+        width: viewHeightPercent(2),
+        borderRadius: (viewHeightPercent(2) / 2),
     }
 })
 

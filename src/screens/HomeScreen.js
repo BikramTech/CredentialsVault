@@ -10,10 +10,7 @@ const HomeScreen = ({isBottomSheetOpen, onToggleBottomSheet}) => {
 
   
 
-  const NoDataFound = () => <ImageBackground
-  style={styles.noDataFoundImageIcon}
-  
-   source={require('../noDataFound.png')} ></ImageBackground>
+  const NoDataFound = () => <Text style={{alignSelf:'center', top: viewHeightPercent(30), fontWeight:'700'}}>No data</Text>
 
   return (
     
@@ -25,7 +22,7 @@ const HomeScreen = ({isBottomSheetOpen, onToggleBottomSheet}) => {
 
       <View style={styles.savedAppsCredListContainer}>
       
-      <Text style={styles.credentialsListingHeaderText}>Credentials</Text>
+      {/* <Text style={styles.credentialsListingHeaderText}>Credentials</Text> */}
 
       {NoDataFound()}
 
@@ -49,7 +46,7 @@ const styles = StyleSheet.create({
     height: viewHeightPercent(75),
     backgroundColor: Colors.white,
     borderTopRightRadius: viewHeightPercent(20),
-    borderBottomLeftRadius: viewHeightPercent(20),
+    borderBottomLeftRadius: viewHeightPercent(15),
     paddingTop: viewHeightPercent(2),
     margin: viewWidthPercent(1)
   },
