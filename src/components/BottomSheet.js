@@ -124,8 +124,11 @@ const styles = StyleSheet.create({
         margin: viewWidthPercent(1),
         backgroundColor:'white',
         borderTopLeftRadius: viewHeightPercent(20),
+        borderTopRightRadius: viewHeightPercent(3),
         borderBottomRightRadius: viewHeightPercent(10),
-         zIndex: 1
+        borderBottomLeftRadius: viewHeightPercent(3),
+        zIndex: 1,
+        elevation: 10
         },
 
     buttonsContainer: {

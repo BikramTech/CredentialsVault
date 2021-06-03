@@ -39,7 +39,7 @@ const HomeScreen = () => {
   };
 
   const NoDataFound = () => (
-    <Text style={{ alignSelf: "center", top: "50%", fontWeight: "700" }}>
+    <Text style={{ alignSelf: "center", top: "50%", fontWeight: "700", color: 'gray' }}>
       No data
     </Text>
   );
@@ -85,7 +85,7 @@ const HomeScreen = () => {
         ContainerComponent={AddCredentialsForm}
       />
       <LinearGradient
-        colors={[Colors.primary, Colors.secondary]}
+        colors={[Colors.white, Colors.white]}
         style={{ flex: 1, zIndex: -1 }}
       ></LinearGradient>
       <StatusBar backgroundColor={Colors.primary} />
@@ -115,14 +115,15 @@ const styles = StyleSheet.create({
   savedAppsCredListContainer: {
     position: "absolute",
     height: viewHeightPercent(70),
-    width: "100%",
+    width: "90%",
     backgroundColor: Colors.white,
-    borderTopRightRadius: viewHeightPercent(20),
-    borderBottomLeftRadius: viewHeightPercent(15),
+    borderRadius: viewHeightPercent(5),
+    
     paddingTop: viewHeightPercent(2),
-    top: heightPercentageToDP(20),
-    marginHorizontal: viewWidthPercent(1),
-    marginBottom: viewWidthPercent(1),
+    top: heightPercentageToDP(15),
+    alignSelf:'center',
+    bottom: heightPercentageToDP(10),
+    elevation: 8
   },
 
   upperSection: {
