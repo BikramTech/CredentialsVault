@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 2.5
     },
     plusIconContainer: {
-        marginHorizontal: 15 
+        marginLeft: 15 
     }
 });
 

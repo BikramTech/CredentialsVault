@@ -5,7 +5,8 @@ import { View, Animated, StyleSheet, Dimensions, TouchableOpacity, Text, StatusB
 import LinearGradient from 'react-native-linear-gradient';
 
 import { Colors } from '../constants';
-import { viewHeightPercent, viewWidthPercent } from '../shared/Utils'
+import { viewHeightPercent, viewWidthPercent, windowHeightPercent } from '../shared/Utils'
+
 
 const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
 
@@ -26,6 +27,7 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
             useNativeDriver: true,
         }).start();
     };
+     
     const handleClose = () => {
         Animated.timing(animation, {
             toValue: 0,
@@ -76,7 +78,7 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
 
     return (
         <>
-            <Animated.View style={[StyleSheet.absoluteFill, styles.cover, backdrop]} />
+            <Animated.View style={[StyleSheet.absoluteFill, styles.cover, backdrop, {zIndex: isOpen ? -.5: -1}]} />
             <View style={[styles.sheet]}>
             
 
@@ -115,14 +117,16 @@ const styles = StyleSheet.create({
     },
 
     popup: {
-        height: viewHeightPercent(85),
-        display:"flex",
+        position: "relative",
+        width: '100%',
+        height: windowHeightPercent(85),
         justifyContent:'space-between',
         margin: viewWidthPercent(1),
         backgroundColor:'white',
         borderTopLeftRadius: viewHeightPercent(20),
         borderBottomRightRadius: viewHeightPercent(10),
-    },
+         zIndex: 1
+        },
 
     buttonsContainer: {
         display: 'flex',

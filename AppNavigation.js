@@ -14,50 +14,6 @@ const AppNavigation = () => {
 
     const { Screen, Navigator } = createStackNavigator();
 
-    const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
-    const [searchBoxTextValue, setSearchBoxTextValue] = useState("");
-    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-
-    const [isAppSearchClosed, setIsAppSearchClosed] = useState(true);
-
-    const toggleBottomSheet = () => {
-        setIsBottomSheetOpen(!isBottomSheetOpen);
-    };
-
-    const toggleSearch = () => {
-        const isOpen = !isSearchBoxOpen;
-        setIsSearchBoxOpen(isOpen);
-        clearSearchBox()
-    };
-
-    const onSearchBoxTextChange = (searchText) => {
-        setSearchBoxTextValue(searchText);
-    };
-
-    const clearSearchBox = () => {
-        setSearchBoxTextValue("");
-    };
-
-    const toggleAppSearch = () => {
-        setIsAppSearchClosed(!isAppSearchClosed);
-    }
-
-    const homeScreenHeaderOptions = {
-        title: AppTitle,
-        header: isSearchBoxOpen? () =>  <HeaderSearchBox searchBoxTextValue={searchBoxTextValue} onClearSearchBox={() => clearSearchBox()} onToggleSearch={() => toggleSearch()} onSearchBoxTextChange={(value) => onSearchBoxTextChange(value)} /> : React.ReactNode,
-        headerTitleAlign: "left",
-        headerStyle: { backgroundColor: Colors.primary },
-        headerRight: !isBottomSheetOpen? () => <HeaderRightSection  onToggleSearch={() => toggleSearch()} onToggleBottomSheet={() => toggleBottomSheet()} /> : React.ReactNode,
-        headerTintColor: Colors.white,
-        headerStatusBarStyle: {backgroundColor: Colors.primary},
-        headerTitleStyle: { fontSize: viewHeightPercent(2.1), fontFamily: 'HelveticaNeue-Medium'  }
-    };
-
-    // const appSearchHeaderOptions = {
-    //     header: HeaderSearchBox.bind(this, {searchBoxTextValue: searchBoxTextValue, onClearSearchBox: clearSearchBox, onToggleSearch: toggleAppSearch, onSearchBoxTextChange: (value) => onSearchBoxTextChange(value)}),
-    //     headerStyle: { backgroundColor: Colors.primary },
-    //     headerStatusBarStyle: {backgroundColor: Colors.primary}
-    // }
 
     return (
         <NavigationContainer>
@@ -65,8 +21,8 @@ const AppNavigation = () => {
             
                 <Screen
                     name={ScreenNames.home}
-                    component={Home.bind(this,{isBottomSheetOpen, onToggleBottomSheet: toggleBottomSheet})}
-                    options={homeScreenHeaderOptions}
+                    component={Home.bind(this)}
+                    options={{headerShown : false, headerStatusBarHeight: 0}}
                 >
                 </Screen>
 

@@ -1,3 +1,3 @@
-import { viewHeightPercent, viewWidthPercent } from './Utils';
+import { viewHeightPercent, viewWidthPercent, windowHeightPercent, heightPercentageToDP } from './Utils';
 
-export { viewHeightPercent, viewWidthPercent };
+export { viewHeightPercent, viewWidthPercent, windowHeightPercent, heightPercentageToDP };

@@ -58,7 +58,6 @@ const AppSearch = (props) => {
     };
 
     const selectApp = ({ website }) => {
-        console.log(website);
         let homeRoute = navigation.dangerouslyGetState().routes.find(route => route.name === ScreenNames.home);
         homeRoute.params = website;
         toggleAppSearch();
