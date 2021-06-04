@@ -22,7 +22,7 @@ const AppNavigation = () => {
                 <Screen
                     name={ScreenNames.home}
                     component={Home.bind(this)}
-                    options={{headerShown : false, headerStatusBarHeight: 0}}
+                    options={{headerShown : false}}
                 >
                 </Screen>
 

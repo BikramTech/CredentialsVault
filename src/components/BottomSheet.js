@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Animated, StyleSheet, Dimensions, TouchableOpacity, Text, StatusBar } from 'react-native';
 
 import LinearGradient from 'react-native-linear-gradient';
@@ -9,6 +9,8 @@ import { viewHeightPercent, viewWidthPercent, windowHeightPercent } from '../sha
 
 
 const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
+
+    const[isFormSubmitButtonClicked, setIsFormSubmitButtonClicked] = useState(false);
 
     useEffect(() => {
 
@@ -68,11 +70,25 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
         ],
     };
 
-    const CloseButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={handleClose}>
-        <Text style={styles.closeBtnText}>Close</Text>
+    const handleSubmitButtonPress = () => {
+        setIsFormSubmitButtonClicked(true);
+    }
+
+    const handleFormSubmissionCancel = () => {
+        setIsFormSubmitButtonClicked(false);
+    }
+
+    const handleFormSubmissionSuccess = () => {
+        setIsFormSubmitButtonClicked(false);
+        handleClose();
+        alert("Credentials Added!")
+    }
+
+    const CancelButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={handleClose}>
+        <Text style={styles.closeBtnText}>Cancel</Text>
     </TouchableOpacity>
 
-    const SaveButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={handleClose}>
+    const SubmitButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={handleSubmitButtonPress}>
     <Text style={styles.closeBtnText}>Save</Text>
     </TouchableOpacity>
 
@@ -83,13 +99,13 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
             
 
                 <Animated.View style={[styles.popup, slideUp]}>
-                <ContainerComponent />
+                <ContainerComponent isBottomSheetOpen={isOpen} isSubmittingForm={isFormSubmitButtonClicked} onFormSubmissionCancel={handleFormSubmissionCancel} onFormSubmissionSuccess={handleFormSubmissionSuccess} />
 
 
                 <View style={styles.buttonsContainer}>
 
-                <SaveButton />
-                 <CloseButton />
+                <SubmitButton />
+                 <CancelButton />
                  
                  </View>
                  

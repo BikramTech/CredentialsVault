@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Dimensions, StatusBar } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, Dimensions, StatusBar, Platform, StatusBarPropsIOS } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 
 import {
@@ -14,11 +14,25 @@ import {
   HeaderRightSection,
 } from "../components";
 import { Colors } from "../constants";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { WebsitesDataDbService } from '../services';
 
 const HomeScreen = () => {
   const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
   const [searchBoxTextValue, setSearchBoxTextValue] = useState("");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+  useEffect(() => {
+    getAllCredentials();
+  }, []);
+
+  const getAllCredentials = () => {
+    WebsitesDataDbService.GetCredentialsData().then(resp => {
+      debugger;
+    }).catch(err => {
+      debugger;
+    })
+  }
 
   const toggleBottomSheet = () => {
     setIsBottomSheetOpen(!isBottomSheetOpen);
@@ -46,7 +60,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.homeContainer}>
-      <View style={styles.headerContainer}>
+      <SafeAreaView style={styles.headerContainer}>
         {isSearchBoxOpen && (
           <HeaderSearchBox
             searchBoxTextValue={searchBoxTextValue}
@@ -74,7 +88,7 @@ const HomeScreen = () => {
             )}
           </View>
         )}
-      </View>
+      </SafeAreaView>
 
       <View style={styles.savedAppsCredListContainer}>
         <NoDataFound />
@@ -85,8 +99,8 @@ const HomeScreen = () => {
         ContainerComponent={AddCredentialsForm}
       />
       <LinearGradient
-        colors={[Colors.white, Colors.white]}
-        style={{ flex: 1, zIndex: -1 }}
+        colors={[Colors.primary, Colors.primary]}
+        style={{ zIndex: -1, height: 50 }}
       ></LinearGradient>
       <StatusBar backgroundColor={Colors.primary} />
     </View>
@@ -96,12 +110,12 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   homeContainer: {
     flex: 1,
-    backgroundColor: "white",
+
   },
 
   headerContainer: {
     position: "absolute",
-    width: "100%",
+    width: "100%"
   },
 
   headerWrapper: {
@@ -118,12 +132,22 @@ const styles = StyleSheet.create({
     width: "90%",
     backgroundColor: Colors.white,
     borderRadius: viewHeightPercent(5),
-    
+
     paddingTop: viewHeightPercent(2),
     top: heightPercentageToDP(15),
-    alignSelf:'center',
+    alignSelf: 'center',
     bottom: heightPercentageToDP(10),
-    elevation: 8
+    ...Platform.select({
+      android: {
+        elevation: 8,
+      },
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 1,
+      }
+    })
   },
 
   upperSection: {
