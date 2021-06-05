@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Dimensions, StatusBar, Platform, StatusBarPropsIOS } from "react-native";
+import { View, Text, StyleSheet, Dimensions, StatusBar, Platform, FlatList, Image, TouchableOpacity } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
+import { Show , Hide} from 'react-native-iconly';
 
 import {
   viewHeightPercent,
@@ -21,6 +22,8 @@ const HomeScreen = () => {
   const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
   const [searchBoxTextValue, setSearchBoxTextValue] = useState("");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [credentials, setCredentials] = useState([]);
+  const[passwordVisibility, setPasswordVisibility] = useState(false);
 
   useEffect(() => {
     getAllCredentials();
@@ -29,6 +32,8 @@ const HomeScreen = () => {
   const getAllCredentials = () => {
     WebsitesDataDbService.GetCredentialsData().then(resp => {
       debugger;
+      console.log(resp);
+      setCredentials(resp);
     }).catch(err => {
       debugger;
     })
@@ -52,11 +57,51 @@ const HomeScreen = () => {
     setSearchBoxTextValue("");
   };
 
+  const toggleCredentialsVisibility = (data) => {
+    data.isPasswordVisible = !data.isPasswordVisible;
+    setPasswordVisibility(!passwordVisibility)
+  }
+
   const NoDataFound = () => (
     <Text style={{ alignSelf: "center", top: "50%", fontWeight: "700", color: 'gray' }}>
       No data
     </Text>
   );
+
+  const CredentialLogo = (logo) => <Image source={{ uri: logo }} style={{ height: viewHeightPercent(6), width: viewHeightPercent(6), borderRadius: (viewHeightPercent(6) / 2) }} resizeMode='contain'></Image>
+
+  const CredentialsListItem = (data) => (<View style={{ borderBottomColor: Colors.silver, borderBottomWidth: 1, paddingVertical: '5%' }}>
+
+    <View style={styles.credentialsCard}>
+
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        {CredentialLogo(data.logo)}
+
+
+      </View>
+
+      <View style={{ flex: 3, paddingLeft: '5%' }}>
+        <Text style={{ fontWeight: '500', fontSize: viewHeightPercent(2.1) }}>{data.name}</Text>
+
+        <View style={{ marginTop: '3%' }}>
+          <Text >{data.username}</Text>
+          { data.isPasswordVisible && <Text >{data.password}</Text>}
+          {!data.isPasswordVisible && <Text style={{fontWeight: 'bold', fontSize: viewHeightPercent(2.5)}} >................</Text>}
+        </View>
+      </View>
+
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      
+      <TouchableOpacity style={{ padding: '15%'}} onPress={() => toggleCredentialsVisibility(data)}>
+      { !data.isPasswordVisible && <Show set="bold" size='medium' primaryColor={Colors.primary} />}
+      { data.isPasswordVisible && <Hide set="bold" size='medium' primaryColor={Colors.primary} />}
+        </TouchableOpacity>
+
+      </View>
+
+    </View>
+
+  </View>)
 
   return (
     <View style={styles.homeContainer}>
@@ -91,12 +136,24 @@ const HomeScreen = () => {
       </SafeAreaView>
 
       <View style={styles.savedAppsCredListContainer}>
-        <NoDataFound />
+        {!credentials?.length && <NoDataFound />}
+        <FlatList
+          style={{ flex: 1 }}
+          data={credentials}
+          keyExtractor={(item, index) => index}
+          renderItem={({ item, separators }) => CredentialsListItem(item)}
+          scrollIndicatorInsets={{ right: 1 }}
+          extraData={passwordVisibility}
+        />
       </View>
+
+
+
       <BottomSheet
         isOpen={isBottomSheetOpen}
         toggleBottomSheet={toggleBottomSheet}
         ContainerComponent={AddCredentialsForm}
+        onFormSubmissionSuccess={getAllCredentials}
       />
       <LinearGradient
         colors={[Colors.primary, Colors.primary]}
@@ -110,7 +167,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   homeContainer: {
     flex: 1,
-
+    backgroundColor: Colors.white
   },
 
   headerContainer: {
@@ -132,8 +189,7 @@ const styles = StyleSheet.create({
     width: "90%",
     backgroundColor: Colors.white,
     borderRadius: viewHeightPercent(5),
-
-    paddingTop: viewHeightPercent(2),
+    padding: viewHeightPercent(2),
     top: heightPercentageToDP(15),
     alignSelf: 'center',
     bottom: heightPercentageToDP(10),
@@ -168,6 +224,17 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     top: "25%",
   },
+
+  credentialsCard: {
+    ...Platform.select({
+      android: {
+        elevation: 8,
+      },
+      ios: {
+        
+      }
+    }),flex: 1, flexDirection: 'row', padding: '3%', borderTopLeftRadius: viewHeightPercent(3), borderBottomRightRadius: viewHeightPercent(3), borderRadius: viewHeightPercent(1)
+  }
 });
 
 export default HomeScreen;

@@ -39,9 +39,7 @@ const HeaderSearchBoxScreen = ({
   return (
     <SafeAreaView
       style={{
-        backgroundColor: Colors.primary,
-        borderBottomColor: "#545454",
-        borderBottomWidth: 1,
+        backgroundColor: Colors.primary
       }}
     >
       <View style={styles.searchBoxContainer}>

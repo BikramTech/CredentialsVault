@@ -8,7 +8,7 @@ import { Colors } from '../constants';
 import { viewHeightPercent, viewWidthPercent, windowHeightPercent } from '../shared/Utils'
 
 
-const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
+const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent, onFormSubmissionSuccess }) => {
 
     const[isFormSubmitButtonClicked, setIsFormSubmitButtonClicked] = useState(false);
 
@@ -81,6 +81,7 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent }) => {
     const handleFormSubmissionSuccess = () => {
         setIsFormSubmitButtonClicked(false);
         handleClose();
+        onFormSubmissionSuccess();
         alert("Credentials Added!")
     }
 
