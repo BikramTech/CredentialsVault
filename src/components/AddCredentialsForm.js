@@ -1,366 +1,430 @@
 import React, { useState, useEffect } from "react";
 import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
-    Image,
-    KeyboardAvoidingView,
-    Platform,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  ToastAndroid,
 } from "react-native";
 
 import { useNavigation, useRoute } from "@react-navigation/native";
 import {
-    User,
-    Wallet,
-    Password,
-    CloseSquare,
-    Image2,
+  User,
+  Wallet,
+  Password,
+  CloseSquare,
+  Image2,
 } from "react-native-iconly";
 
-import { WebsitesDataDbService } from '../services';
-import { viewHeightPercent, viewWidthPercent, generateUUID } from "../shared/Utils";
+import { WebsitesDataDbService } from "../services";
+import {
+  viewHeightPercent,
+  viewWidthPercent,
+  generateUUID,
+  checkIfOsIsAndroid,
+} from "../shared/Utils";
 import { Colors, ScreenNames } from "../constants";
 
-const AddCredentialsForm = ({ isBottomSheetOpen, isSubmittingForm, onFormSubmissionCancel, onFormSubmissionSuccess }) => {
+const AddCredentialsForm = ({
+  isBottomSheetOpen,
+  isSubmittingForm,
+  onFormSubmissionCancel,
+  onFormSubmissionSuccess,
+}) => {
+  const [name, setName] = useState("");
+  const [emailOrUserName, setEmailOrUserName] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [selectedApp, setSelectedApp] = useState("");
+  const navigation = useNavigation();
+  const route = useRoute();
 
-    const [name, setName] = useState("");
-    const [emailOrUserName, setEmailOrUserName] = useState("");
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [selectedApp, setSelectedApp] = useState("");
-    const navigation = useNavigation();
-    const route = useRoute();
+  const [textInputs, setTextInputs] = useState({});
 
-    const [textInputs, setTextInputs] = useState({})
+  const [textInputRefs, setTextInputRefs] = useState({
+    nameInputRef: "",
+    emailInputRef: "",
+    passwordInputRef: "",
+    confirmPasswordInputRef: "",
+  });
 
-    const [textInputRefs, setTextInputRefs] = useState({
-        nameInputRef: '',
-        emailInputRef: '',
-        passwordInputRef: '',
-        confirmPasswordInputRef: ''
+  useEffect(() => {
+    clearHomeRouteParams();
+  },[]);
+
+  useEffect(() => {
+    if (!isBottomSheetOpen) {
+      resetForm();
+    } else {
+      const homeRouteParams = getHomeRouteParams();
+
+      if (!homeRouteParams) {
+        setSelectedApp("");
+      }
+    }
+
+    if (isSubmittingForm) {
+      saveCredentials();
+    }
+  }, [isBottomSheetOpen, isSubmittingForm]);
+
+  useEffect(() => {
+    navigation.addListener("state", () => {
+      const homeRouteParams = getHomeRouteParams() || "";
+
+      if (homeRouteParams) {
+        setSelectedApp(homeRouteParams);
+      } else {
+        clearHomeRouteParams();
+        setSelectedApp(homeRouteParams);
+      }
     });
 
-    useEffect(() => {
-        if (!isBottomSheetOpen) {
-            resetForm()
+    return () => {
+      navigation.removeListener("state");
+    };
+  }, []);
+
+  const reInitializeInputControls = () => {
+    setName("");
+    setEmailOrUserName("");
+    setPassword("");
+    setConfirmPassword("");
+    blurAllControls();
+  };
+
+  const resetForm = () => {
+    clearHomeRouteParams();
+    setSelectedApp("");
+    setTextInputs({});
+    reInitializeInputControls();
+  };
+
+  const blurAllControls = () => {
+    if (textInputRefs) {
+      Object.entries(textInputRefs).forEach((ref) => {
+        const inputRef = ref[1];
+        if (inputRef) {
+          inputRef.blur();
         }
-        else {
-            const homeRouteParams = getHomeRouteParams();
+      });
+    }
+  };
 
-            if (!homeRouteParams) {
-                setSelectedApp('');
-            }
-        }
+  let getHomeRouteParams = () => {
+    return navigation
+      .dangerouslyGetState()
+      .routes.find((route) => route.name === ScreenNames.home).params;
+  };
 
-        if (isSubmittingForm) {
-            saveCredentials();
-        }
-    }, [isBottomSheetOpen, isSubmittingForm])
+  let clearHomeRouteParams = () => {
+    navigation
+      .dangerouslyGetState()
+      .routes.find((route) => route.name === ScreenNames.home).params = "";
+  };
 
-    useEffect(() => {
-        navigation.addListener("focus", () => {
-            const homeRouteParams = getHomeRouteParams();
+  const clearValue = (setValue) => {
+    setValue("");
+  };
 
-            if (homeRouteParams) {
-                setSelectedApp(homeRouteParams);
-            }
+  const saveCredentials = () => {
+    const credentialsData = getCredentialsData();
+
+    if (validateCredentialsData(credentialsData)) {
+      WebsitesDataDbService.InsertCredentialsData(credentialsData)
+        .then((resp) => {
+          onFormSubmissionSuccess();
+        })
+        .catch((err) => {
+          onFormSubmissionCancel();
         });
+    } else {
+      onFormSubmissionCancel();
+    }
+  };
 
-        return () => {
-            navigation.removeListener("focus");
-        };
-    }, []);
+  const validateCredentialsData = (credentialsData) => {
+    const { username, password } = credentialsData || {};
 
-    const reInitializeInputControls = () => {
-        setName('');
-        setEmailOrUserName('');
-        setPassword("");
-        setConfirmPassword('');
-        blurAllControls();
+    if (!username) {
+      showValidationMessage("Please fill username or email field!");
+      return false;
     }
 
-    const resetForm = () => {
-        clearHomeRouteParams();
-        setSelectedApp("");
-        setTextInputs({});
-        reInitializeInputControls();
+    if ((password || confirmPassword) && password !== confirmPassword) {
+      showValidationMessage("Your passwords are not matching, please check!");
+      return false;
     }
 
-    const blurAllControls = () => {
-        if (textInputRefs) {
-            Object.entries(textInputRefs).forEach(ref => {
-                const inputRef = ref[1];
-                if (inputRef) {
-                    inputRef.blur();
-                }
-            })
-        }
-    }
+    return true;
+  };
 
-    let getHomeRouteParams = () => {
-        return navigation
-            .dangerouslyGetState()
-            .routes.find((route) => route.name === ScreenNames.home).params;
+  const getCredentialsData = () => {
+    const id = generateUUID();
+    const { Id = null, DisplayName } = selectedApp;
+
+    return {
+      id,
+      name: name ? name : DisplayName,
+      username: emailOrUserName,
+      password,
+      credentialsLogoId: Id,
     };
+  };
 
-    let clearHomeRouteParams = () => {
-        navigation
-            .dangerouslyGetState()
-            .routes.find((route) => route.name === ScreenNames.home).params = "";
-    };
+  const MinusIcon = (onClear, inputValue) => (
+    <TouchableOpacity onPress={onClear}>
+      <CloseSquare
+        style={{ display: inputValue ? "flex" : "none" }}
+        primaryColor={Colors.primary}
+        size="small"
+      />
+    </TouchableOpacity>
+  );
 
-    const clearValue = (setValue) => {
-        setValue("");
-    };
+  const onTextInputControlFocus = (inputFocused) => {
+    setTextInputs({ [inputFocused]: true });
+  };
 
-    const saveCredentials = () => {
+  const openAppSearch = () => {
+    navigation.navigate(ScreenNames.appSearch);
+    blurAllControls();
+  };
 
-        const credentialsData = getCredentialsData();
-
-        WebsitesDataDbService.InsertCredentialsData(credentialsData).then(resp => {
-            onFormSubmissionSuccess();
-        }).catch(err => {
-            onFormSubmissionCancel();
-        });
-
+  const showValidationMessage = (validationMessage) => {
+    if (checkIfOsIsAndroid) {
+      ToastAndroid.showWithGravity(
+        validationMessage,
+        3000,
+        ToastAndroid.CENTER
+      );
+      return;
     }
+    Alert.alert("Alert", validationMessage);
+  };
 
-    const getCredentialsData = () => {
-        const id = generateUUID();
-        const credentialsLogoId = selectedApp.Id;
+  const TextInputControl = ({
+    inputIcon,
+    inputValue,
+    onValueChange,
+    placeHolderText,
+    onClear,
+    isInputFocused,
+    textInputRef,
+  }) => (
+    <View
+      style={[
+        styles.controlIconContainer,
+        textInputs[isInputFocused]
+          ? styles.focusedTextInput
+          : styles.blurredTextInput,
+      ]}
+    >
+      {inputIcon()}
+      <TextInput
+        onFocus={() => onTextInputControlFocus(isInputFocused)}
+        ref={(ref) => (textInputRefs[textInputRef] = ref)}
+        onChangeText={onValueChange}
+        blurOnSubmit={true}
+        value={inputValue}
+        placeholder={placeHolderText}
+        placeholderTextColor="gray"
+        style={styles.textInputControl}
+        textContentType={"name"}
+      />
+      {MinusIcon(onClear, inputValue)}
+    </View>
+  );
 
-        return { id, name, username: emailOrUserName, password, credentialsLogoId };
-    }
+  return (
+    <View style={styles.formContainer}>
+      <Text style={styles.formHeaderText}>Save Credentials</Text>
+      {{ selectedApp } && selectedApp?.Logo && (
+        <Image
+          source={{ uri: selectedApp.Logo }}
+          style={styles.selectedAppLogo}
+          resizeMode="contain"
+        ></Image>
+      )}
 
-    const MinusIcon = (onClear, inputValue) => (
-        <TouchableOpacity onPress={onClear}>
-            <CloseSquare
-                style={{ display: inputValue ? "flex" : "none" }}
-                primaryColor={Colors.primary}
-                size="small"
-            />
-        </TouchableOpacity>
-    );
+      {!selectedApp  && (
+        <View style={styles.selectedAppLogo}></View>
+      )}
 
-    const onTextInputControlFocus = (inputFocused) => {
-
-        setTextInputs({ [inputFocused]: true });
-    }
-
-    const openAppSearch = () => {
-        navigation.navigate(ScreenNames.appSearch);
-        blurAllControls();
-    }
-
-
-    const TextInputControl = ({
-        inputIcon,
-        inputValue,
-        onValueChange,
-        placeHolderText,
-        onClear,
-        isInputFocused,
-        textInputRef
-    }) => (
-            <View style={[styles.controlIconContainer, textInputs[isInputFocused] ? styles.focusedTextInput : styles.blurredTextInput]}>
-                {inputIcon()}
-                <TextInput
-                    onFocus={() => onTextInputControlFocus(isInputFocused)}
-                    ref={ref => textInputRefs[textInputRef] = ref}
-                    onChangeText={onValueChange}
-                    blurOnSubmit={true}
-                    value={inputValue}
-                    placeholder={placeHolderText}
-                    placeholderTextColor="gray"
-                    style={styles.textInputControl}
-                    textContentType={'name'}
-                />
-                {MinusIcon(onClear, inputValue)}
-            </View>
-        );
-
-    return (
-        <View style={styles.formContainer}>
-            <Text style={styles.formHeaderText}>Save Credentials</Text>
-            { selectedApp?.Logo && (
-                <Image
-                    source={{ uri: selectedApp.Logo }}
-                    style={styles.selectedAppLogo}
-                    resizeMode="contain"
-                ></Image>
-            )}
-
-            {{ selectedApp } && (
-                <Text style={styles.selectedAppName}>{selectedApp.DisplayName}</Text>
-            )}
-            <TouchableOpacity
-                onPress={openAppSearch}
-                style={{
-                    backgroundColor: Colors.primary,
-                    padding: "3%",
-                    borderRadius: viewHeightPercent(2),
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    marginTop: "4%",
-                    borderColor: Colors.lightGray,
-                    borderWidth: 2,
-                }}
-            >
-                <View
-                    style={{
-                        alignItems: "center",
-                        flex: 1,
-                        flexDirection: "row",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Image2 set="bold" primaryColor={Colors.white} size="small" />
-                    <Text style={{ color: Colors.white, fontSize: viewHeightPercent(2) }}>
-                        {" "}
-                        {selectedApp ? "Choose another logo" : "Choose credentials logo"}
-                    </Text>
-                </View>
-            </TouchableOpacity>
-
-            <KeyboardAvoidingView style={styles.formControlsContainer}>
-                {TextInputControl({
-                    inputIcon: () =>
-                        !selectedApp ? (
-                            <Wallet set="bold" primaryColor={Colors.primary} size="small" />
-                        ) : (
-                                <Image
-                                    source={{ uri: selectedApp.Logo }}
-                                    style={styles.credentialsFieldLogo}
-                                    resizeMode="contain"
-                                ></Image>
-                            ),
-                    inputValue: name,
-                    onValueChange: (value) => setName(value),
-                    placeHolderText: "Credentials Name",
-                    onClear: () => setName(""),
-                    isInputFocused: 'isNameInputFocused',
-                    textInputRef: 'nameInputRef'
-                })}
-
-                {TextInputControl({
-                    inputIcon: () => (
-                        <User set="bold" primaryColor={Colors.primary} size="small" />
-                    ),
-                    inputValue: emailOrUserName,
-                    onValueChange: (value) => setEmailOrUserName(value),
-                    placeHolderText: "Email, username or mobile number",
-                    onClear: () => setEmailOrUserName(""),
-                    isInputFocused: 'isEmailInputFocused',
-                    textInputRef: 'emailInputRef'
-                })}
-
-                {TextInputControl({
-                    inputIcon: () => (
-                        <Password set="bold" primaryColor={Colors.primary} size="small" />
-                    ),
-                    inputValue: password,
-                    onValueChange: (value) => setPassword(value),
-                    placeHolderText: "Password",
-                    onClear: () => setPassword(""),
-                    isInputFocused: 'isPasswordInputFocused',
-                    textInputRef: 'passwordInputRef'
-                })}
-
-                {TextInputControl({
-                    inputIcon: () => (
-                        <Password set="bold" primaryColor={Colors.primary} size="small" />
-                    ),
-                    inputValue: confirmPassword,
-                    onValueChange: (value) => setConfirmPassword(value),
-                    placeHolderText: "Confirm password",
-                    onClear: () => setConfirmPassword(""),
-                    isInputFocused: 'isConfirmPasswordInputFocused',
-                    textInputRef: 'confirmPasswordInputRef'
-                })}
-            </KeyboardAvoidingView>
+      {{ selectedApp } && (
+        <Text style={styles.selectedAppName}>{selectedApp.DisplayName}</Text>
+      )}
+      <TouchableOpacity
+        onPress={openAppSearch}
+        style={{
+          backgroundColor: Colors.primary,
+          padding: "3%",
+          borderRadius: viewHeightPercent(2),
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: "4%",
+          borderColor: Colors.lightGray,
+          borderWidth: 2,
+        }}
+      >
+        <View
+          style={{
+            alignItems: "center",
+            flex: 1,
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
+          <Image2 set="bold" primaryColor={Colors.white} size="small" />
+          <Text style={{ color: Colors.white, fontSize: viewHeightPercent(2) }}>
+            {" "}
+            {selectedApp ? "Choose another logo" : "Choose credentials logo"}
+          </Text>
         </View>
-    );
+      </TouchableOpacity>
+
+      <KeyboardAvoidingView style={styles.formControlsContainer}>
+        {TextInputControl({
+          inputIcon: () =>
+            !selectedApp ? (
+              <Wallet set="bold" primaryColor={Colors.primary} size="small" />
+            ) : (
+              <Image
+                source={{ uri: selectedApp.Logo }}
+                style={styles.credentialsFieldLogo}
+                resizeMode="contain"
+              ></Image>
+            ),
+          inputValue: name,
+          onValueChange: (value) => setName(value),
+          placeHolderText: "Credentials Name",
+          onClear: () => setName(""),
+          isInputFocused: "isNameInputFocused",
+          textInputRef: "nameInputRef",
+        })}
+
+        {TextInputControl({
+          inputIcon: () => (
+            <User set="bold" primaryColor={Colors.primary} size="small" />
+          ),
+          inputValue: emailOrUserName,
+          onValueChange: (value) => setEmailOrUserName(value),
+          placeHolderText: "Email, username or mobile number",
+          onClear: () => setEmailOrUserName(""),
+          isInputFocused: "isEmailInputFocused",
+          textInputRef: "emailInputRef",
+        })}
+
+        {TextInputControl({
+          inputIcon: () => (
+            <Password set="bold" primaryColor={Colors.primary} size="small" />
+          ),
+          inputValue: password,
+          onValueChange: (value) => setPassword(value),
+          placeHolderText: "Password",
+          onClear: () => setPassword(""),
+          isInputFocused: "isPasswordInputFocused",
+          textInputRef: "passwordInputRef",
+        })}
+
+        {TextInputControl({
+          inputIcon: () => (
+            <Password set="bold" primaryColor={Colors.primary} size="small" />
+          ),
+          inputValue: confirmPassword,
+          onValueChange: (value) => setConfirmPassword(value),
+          placeHolderText: "Confirm password",
+          onClear: () => setConfirmPassword(""),
+          isInputFocused: "isConfirmPasswordInputFocused",
+          textInputRef: "confirmPasswordInputRef",
+        })}
+      </KeyboardAvoidingView>
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    formContainer: {
-        paddingTop: viewHeightPercent(5),
-        marginHorizontal: viewWidthPercent(4),
-        overflow: "scroll",
-    },
+  formContainer: {
+    paddingTop: viewHeightPercent(5),
+    marginHorizontal: viewWidthPercent(4),
+    overflow: "scroll",
+  },
 
-    controlIconContainer: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-around",
-        backgroundColor: Colors.white,
-        ...Platform.select({
-            ios: {
-                padding: viewHeightPercent(1.5),
-            },
-            android: {
-                paddingHorizontal: viewHeightPercent(1.5),
-            },
-        }),
+  controlIconContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: Colors.white,
+    ...Platform.select({
+      ios: {
+        padding: viewHeightPercent(1.5),
+      },
+      android: {
+        paddingHorizontal: viewHeightPercent(1.5),
+      },
+    }),
 
-        marginTop: viewHeightPercent(2),
-        borderBottomColor: Colors.lightGray,
-        borderBottomWidth: 2,
-        ...Platform.select({
-            android: {
-                alignItems: "center",
-                height: "15%",
-            }
-        })
-    },
+    marginTop: viewHeightPercent(2),
+    borderBottomColor: Colors.lightGray,
+    borderBottomWidth: 2,
+    ...Platform.select({
+      android: {
+        alignItems: "center",
+        height: "15%",
+      },
+    }),
+  },
 
-    formHeaderText: {
-        fontWeight: "bold",
-        fontSize: viewHeightPercent(2.5),
-        alignSelf: "center",
-        color: Colors.black,
-    },
+  formHeaderText: {
+    fontWeight: "bold",
+    fontSize: viewHeightPercent(2.5),
+    alignSelf: "center",
+    color: Colors.black,
+  },
 
-    textInputControl: {
-        color: Colors.black,
-        flex: 0.9,
-        justifyContent: "center",
-    },
+  textInputControl: {
+    color: Colors.black,
+    flex: 0.9,
+    justifyContent: "center",
+  },
 
-    formControlsContainer: {
-        paddingTop: "10%",
-    },
+  formControlsContainer: {
+    paddingTop: "10%",
+  },
 
-    selectedAppLogo: {
-        height: viewHeightPercent(5),
-        width: viewHeightPercent(5),
-        borderRadius: viewHeightPercent(5) / 2,
-        alignSelf: "center",
-        marginTop: "5%",
-    },
+  selectedAppLogo: {
+    height: viewHeightPercent(5),
+    width: viewHeightPercent(5),
+    borderRadius: viewHeightPercent(5) / 2,
+    alignSelf: "center",
+    marginTop: "5%",
+  },
 
-    selectedAppName: {
-        fontWeight: "500",
-        alignSelf: "center",
-        marginTop: "4%",
-    },
+  selectedAppName: {
+    fontWeight: "500",
+    alignSelf: "center",
+    marginTop: "4%",
+  },
 
-    credentialsFieldLogo: {
-        height: viewHeightPercent(2),
-        width: viewHeightPercent(2),
-        borderRadius: viewHeightPercent(2) / 2,
-    },
+  credentialsFieldLogo: {
+    height: viewHeightPercent(2),
+    width: viewHeightPercent(2),
+    borderRadius: viewHeightPercent(2) / 2,
+  },
 
-    focusedTextInput: {
-        borderBottomColor: Colors.primary
-    },
+  focusedTextInput: {
+    borderBottomColor: Colors.primary,
+  },
 
-    blurredTextInput: {
-        borderBottomColor: Colors.lightGray
-    }
+  blurredTextInput: {
+    borderBottomColor: Colors.lightGray,
+  },
 });
 
 export default AddCredentialsForm;

@@ -95,6 +95,7 @@ const WebsitesDataDbService = {
                             const websites = results.rows.raw();
                             resolve(websites);
                         }, err => {
+                            debugger;
                             reject(err);
                         });
                 });
@@ -113,11 +114,31 @@ const WebsitesDataDbService = {
                     tx.executeSql(` Select credentials.*, website.Logo as logo from CredentialsData credentials inner Join Websites website on credentials.credentialsLogoId=website.Id`,
                         null,
                         (tx, results) => {
-                            debugger;
                             const websites = results.rows.raw();
                             resolve(websites);
                         }, err => {
-                            debugger;
+                            reject(err);
+                        });
+                });
+            }
+            catch (err) {
+                reject(err);
+            }
+        })
+    },
+
+    DeleteCredential: (id) => {
+
+        return new Promise((resolve, reject) => {
+            try {
+                db.transaction((tx) => {
+                    tx.executeSql(` Delete from CredentialsData where id='${id}'`,
+                        null,
+                        (tx, results) => {
+                            const websites = results.rows.raw();
+                            resolve(websites);
+                        }, err => {
+                            reject(err);
                         });
                 });
             }

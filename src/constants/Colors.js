@@ -6,7 +6,8 @@ const Colors = {
     lightBlack: "#393E42",
     graphiteBlack: "#303338",
     lightGray: "#ECEDEF",
-    silver: "silver"
+    silver: "silver",
+    red: "red"
 }
 
 export default Colors;

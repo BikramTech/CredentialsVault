@@ -1,4 +1,4 @@
-import { Dimensions, PixelRatio } from 'react-native';
+import { Dimensions, PixelRatio, Platform } from 'react-native';
 
 const screenHeight = Dimensions.get("screen").height;
 const screenWidth = Dimensions.get("screen").width;
@@ -39,10 +39,15 @@ const  generateUUID = () => {
     return uuid;
 }
 
+const checkIfOsIsAndroid = () => {
+    return Platform.OS === "android";
+}
+
 export {
     viewHeightPercent,
     viewWidthPercent,
     windowHeightPercent,
     heightPercentageToDP,
-    generateUUID
+    generateUUID,
+    checkIfOsIsAndroid
 };

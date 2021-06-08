@@ -1,52 +1,55 @@
 
 import React, { useEffect, useState } from 'react';
-import { View, Animated, StyleSheet, Dimensions, TouchableOpacity, Text, StatusBar } from 'react-native';
-
-import LinearGradient from 'react-native-linear-gradient';
+import { View, Animated, StyleSheet, Dimensions, TouchableOpacity, Text, StatusBar, ToastAndroid } from 'react-native';
 
 import { Colors } from '../constants';
-import { viewHeightPercent, viewWidthPercent, windowHeightPercent } from '../shared/Utils'
+import { viewHeightPercent, viewWidthPercent, windowHeightPercent } from '../shared/Utils';
 
+const animation = new Animated.Value(0);
 
-const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent, onFormSubmissionSuccess }) => {
+class BottomSheet extends React.Component {
 
-    const[isFormSubmitButtonClicked, setIsFormSubmitButtonClicked] = useState(false);
-
-    useEffect(() => {
-
-        if (isOpen) {
-            handleOpen();
+    constructor(props)
+    {
+        super(props)
+        this.state = {
+            isFormSubmitButtonClicked: false,
+            
         }
+        
+        this.handleOpen = this.handleOpen.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+    }
 
-    }, [isOpen])
+    componentDidMount() {
+        this.handleOpen();
+    }
 
-    let animation = new Animated.Value(0)
-
-    const handleOpen = () => {
+    handleOpen = () => {
         Animated.timing(animation, {
             toValue: 1,
             duration: 300,
             useNativeDriver: true,
         }).start();
     };
-     
-    const handleClose = () => {
+
+    handleClose = () => {
         Animated.timing(animation, {
             toValue: 0,
             duration: 200,
             useNativeDriver: true,
         }).start();
-        toggleBottomSheet();
+        this.props.toggleBottomSheet();
     };
 
-    const screenHeight = Dimensions.get("window").height;
+   screenHeight = Dimensions.get("window").height;
 
-    const backdrop = {
+   backdrop = {
         transform: [
             {
                 translateY: animation.interpolate({
                     inputRange: [0, 0.01],
-                    outputRange: [screenHeight, 0],
+                    outputRange: [this.screenHeight, 0],
                     extrapolate: "clamp",
                 }),
             },
@@ -58,71 +61,68 @@ const BottomSheet = ({ isOpen, toggleBottomSheet, ContainerComponent, onFormSubm
         }),
     };
 
-    const slideUp = {
+    slideUp = {
         transform: [
             {
                 translateY: animation.interpolate({
                     inputRange: [0.01, 1],
-                    outputRange: [0, -1 * screenHeight],
+                    outputRange: [0, -1 * this.screenHeight],
                     extrapolate: "clamp",
                 }),
             },
         ],
     };
 
-    const handleSubmitButtonPress = () => {
-        setIsFormSubmitButtonClicked(true);
+    handleSubmitButtonPress = () => {
+        this.setState({ isFormSubmitButtonClicked: true});
     }
 
-    const handleFormSubmissionCancel = () => {
-        setIsFormSubmitButtonClicked(false);
+    handleFormSubmissionCancel = () => {
+        this.setState({ isFormSubmitButtonClicked: false});
     }
 
-    const handleFormSubmissionSuccess = () => {
-        setIsFormSubmitButtonClicked(false);
-        handleClose();
-        onFormSubmissionSuccess();
-        alert("Credentials Added!")
+    handleFormSubmissionSuccess = () => {
+        this.setState({ isFormSubmitButtonClicked: false});
+        this.handleClose();
+        this.props.onFormSubmissionSuccess();
+        ToastAndroid.showWithGravity("Saved successfully!", 3000, ToastAndroid.BOTTOM);
     }
 
-    const CancelButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={handleClose}>
+    CancelButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={this.handleClose}>
         <Text style={styles.closeBtnText}>Cancel</Text>
     </TouchableOpacity>
 
-    const SubmitButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={handleSubmitButtonPress}>
+    SubmitButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={this.handleSubmitButtonPress}>
     <Text style={styles.closeBtnText}>Save</Text>
     </TouchableOpacity>
 
-    return (
-        <>
-            <Animated.View style={[StyleSheet.absoluteFill, styles.cover, backdrop, {zIndex: isOpen ? -.5: -1}]} />
-            <View style={[styles.sheet]}>
-            
-
-                <Animated.View style={[styles.popup, slideUp]}>
-                <ContainerComponent isBottomSheetOpen={isOpen} isSubmittingForm={isFormSubmitButtonClicked} onFormSubmissionCancel={handleFormSubmissionCancel} onFormSubmissionSuccess={handleFormSubmissionSuccess} />
 
 
-                <View style={styles.buttonsContainer}>
+    render() {
+        const {ContainerComponent} = this.props;
+        return( <>
+        <Animated.View style={[StyleSheet.absoluteFill,  this.backdrop, {zIndex: this.props.isOpen ? -.5: -1, backgroundColor: this.props.isOpen? "rgba(0,0,0,.5)": Colors.white}]} />
+        <View style={[styles.sheet]}>
+        
 
-                <SubmitButton />
-                 <CancelButton />
-                 
-                 </View>
-                 
+            <Animated.View style={[styles.popup, this.slideUp]}>
+            <ContainerComponent isBottomSheetOpen={this.props.isOpen} isSubmittingForm={this.state.isFormSubmitButtonClicked} onFormSubmissionCancel={this.handleFormSubmissionCancel} onFormSubmissionSuccess={this.handleFormSubmissionSuccess} />
 
-                </Animated.View>
-            </View>
-        </>
-    )
 
+            <View style={styles.buttonsContainer}>
+
+            {this.SubmitButton()}
+             {this.CancelButton()}
+             
+             </View>
+             
+
+            </Animated.View>
+        </View>
+    </>)}
 }
 
 const styles = StyleSheet.create({
-
-    cover: {
-        backgroundColor: "rgba(0,0,0,.5)"
-    },
 
     sheet: {
         position: "absolute",
