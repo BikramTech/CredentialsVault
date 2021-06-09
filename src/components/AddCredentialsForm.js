@@ -216,6 +216,8 @@ const AddCredentialsForm = ({
     onClear,
     isInputFocused,
     textInputRef,
+    textContentType,
+    isPasswordField
   }) => (
     <View
       style={[
@@ -235,7 +237,9 @@ const AddCredentialsForm = ({
         placeholder={placeHolderText}
         placeholderTextColor="gray"
         style={styles.textInputControl}
-        textContentType={"name"}
+        textContentType={textContentType}
+        autoCapitalize='none'
+        secureTextEntry={isPasswordField}
       />
       {MinusIcon(onClear, inputValue)}
     </View>
@@ -307,6 +311,8 @@ const AddCredentialsForm = ({
           onClear: () => setName(""),
           isInputFocused: "isNameInputFocused",
           textInputRef: "nameInputRef",
+          textContentType: "name",
+          isPasswordField: false
         })}
 
         {TextInputControl({
@@ -319,6 +325,8 @@ const AddCredentialsForm = ({
           onClear: () => setEmailOrUserName(""),
           isInputFocused: "isEmailInputFocused",
           textInputRef: "emailInputRef",
+          textContentType: "emailAddress",
+          isPasswordField: false
         })}
 
         {TextInputControl({
@@ -331,6 +339,8 @@ const AddCredentialsForm = ({
           onClear: () => setPassword(""),
           isInputFocused: "isPasswordInputFocused",
           textInputRef: "passwordInputRef",
+          textContentType: "password",
+          isPasswordField: true
         })}
 
         {TextInputControl({
@@ -343,6 +353,8 @@ const AddCredentialsForm = ({
           onClear: () => setConfirmPassword(""),
           isInputFocused: "isConfirmPasswordInputFocused",
           textInputRef: "confirmPasswordInputRef",
+          textContentType: "password",
+          isPasswordField: true
         })}
       </KeyboardAvoidingView>
     </View>

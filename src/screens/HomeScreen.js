@@ -138,6 +138,12 @@ const HomeScreen = () => {
     return <Text style={{ fontWeight: "bold" }}>{maskedPasswordText}</Text>
   }
 
+
+  const copyToClipboard = (copiedText) => {
+    Clipboard.setString(copiedText);
+    ToastAndroid.showWithGravity("Copied to clipboard!", 3000, ToastAndroid.BOTTOM);
+  }
+
   const CredentialsListCardButton = (textValue, onPressMethod, onPressArgs, textColor) => {
 
     return <TouchableOpacity
@@ -191,7 +197,7 @@ const HomeScreen = () => {
 
         <View style={{ flex: 3, paddingLeft: "5%" }}>
           <Text
-            style={{ fontWeight: "600", fontSize: viewHeightPercent(1.8) }}
+            style={{ fontWeight: "900", fontSize: viewHeightPercent(1.9) }}
           >
             {data.name}
           </Text>
@@ -231,9 +237,9 @@ const HomeScreen = () => {
 
           {CredentialsListCardButton("Edit", deleteCredential.bind(this), data.name, Colors.primary)}
 
-          {data?.password ? CredentialsListCardButton("Copy password", Clipboard.setString.bind(this), data.password, Colors.primary) : React.Fragment}
+          {data?.password ? CredentialsListCardButton("Copy password", copyToClipboard.bind(this), data.password, Colors.primary) : React.Fragment}
 
-          { !data?.password ? CredentialsListCardButton("Copy username", Clipboard.setString.bind(this), data.username, Colors.primary) : React.Fragment}
+          { !data?.password ? CredentialsListCardButton("Copy username", copyToClipboard.bind(this), data.username, Colors.primary) : React.Fragment}
 
           {CredentialsListCardButton("Delete", deleteCredential.bind(this), data.name, Colors.red)}
 
