@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { Show, Hide, Delete } from "react-native-iconly";
+import Clipboard from '@react-native-community/clipboard';
 
 import {
   viewHeightPercent,
@@ -35,6 +36,7 @@ const HomeScreen = () => {
   const [searchBoxTextValue, setSearchBoxTextValue] = useState("");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
   const [credentials, setCredentials] = useState([]);
+  const [credentialsSearchList, setCredentialsSearchList] = useState([]);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState("");
 
@@ -47,8 +49,9 @@ const HomeScreen = () => {
       .then((resp) => {
         console.log(resp);
         setCredentials(resp);
+        setCredentialsSearchList(resp);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   const toggleBottomSheet = () => {
@@ -63,10 +66,18 @@ const HomeScreen = () => {
 
   const onSearchBoxTextChange = (searchText) => {
     setSearchBoxTextValue(searchText);
+    const searchResult = searchCredentials(searchText);
+    setCredentials(searchResult);
   };
+
+  const searchCredentials = (searchText) => {
+    let searchTerm = searchText.toLowerCase();
+    return credentialsSearchList.filter(cred => cred.name.toLowerCase().indexOf(searchTerm) >= 0 || cred.username.toLowerCase().indexOf(searchTerm) >= 0);
+  }
 
   const clearSearchBox = () => {
     setSearchBoxTextValue("");
+    onSearchBoxTextChange("");
   };
 
   const toggleCredentialsVisibility = (data) => {
@@ -105,21 +116,37 @@ const HomeScreen = () => {
 
   const onDeleteConfirm = () => {
     WebsitesDataDbService.DeleteCredential(selectedCardId).then(resp => {
-      
+
       ToastAndroid.showWithGravity("Deleted Successfull!", 3000, ToastAndroid.BOTTOM);
 
-      const filteredCredentials = credentials.filter(credential =>  credential.id !== selectedCardId);
+      const filteredCredentials = credentials.filter(credential => credential.id !== selectedCardId);
       setCredentials(filteredCredentials);
       setSelectedCardId("");
     }).catch(err => {
       alert("Some error has occured");
     })
-    
+
   };
 
   const onDeleteCancel = () => {
     setSelectedCardId("");
   };
+
+  const getMaskedPasswordText = (passwordValue) => {
+
+    const maskedPasswordText = new Array(passwordValue.length).fill('•').join("");
+    return <Text style={{ fontWeight: "bold" }}>{maskedPasswordText}</Text>
+  }
+
+  const CredentialsListCardButton = (textValue, onPressMethod, onPressArgs, textColor) => {
+
+    return <TouchableOpacity
+      style={{ padding: "2%" }}
+      onPress={() => onPressMethod(onPressArgs)}
+    >
+      <Text style={{ fontWeight: 'bold', color: textColor }}>{textValue}</Text>
+    </TouchableOpacity>
+  }
 
   const NoDataFound = () => (
     <Text
@@ -151,7 +178,7 @@ const HomeScreen = () => {
       style={{
         borderBottomColor: Colors.silver,
         borderBottomWidth: 1,
-        paddingVertical: "5%",
+        paddingVertical: "3%",
       }}
       onPress={() => toggleCredentialCardSelection(data.id)}
     >
@@ -164,7 +191,7 @@ const HomeScreen = () => {
 
         <View style={{ flex: 3, paddingLeft: "5%" }}>
           <Text
-            style={{ fontWeight: "bold", fontSize: viewHeightPercent(2.1) }}
+            style={{ fontWeight: "600", fontSize: viewHeightPercent(1.8) }}
           >
             {data.name}
           </Text>
@@ -172,16 +199,14 @@ const HomeScreen = () => {
           <View style={{ marginTop: "3%" }}>
             <Text>{data.username}</Text>
             {data.isPasswordVisible && <Text>{data.password}</Text>}
-            {!data.isPasswordVisible && (
-              <Text style={{ fontWeight: "bold" }}>***********</Text>
-            )}
+            {!data.isPasswordVisible && data?.password ? getMaskedPasswordText(data.password) : React.Fragment}
           </View>
         </View>
 
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <TouchableOpacity
+         { data?.password ? <TouchableOpacity
             style={{ padding: "15%" }}
             onPress={() => toggleCredentialsVisibility(data)}
           >
@@ -191,7 +216,7 @@ const HomeScreen = () => {
             {data.isPasswordVisible && (
               <Hide set="bold" size="medium" primaryColor={Colors.primary} />
             )}
-          </TouchableOpacity>
+          </TouchableOpacity>: React.Fragment }
         </View>
       </View>
 
@@ -200,16 +225,19 @@ const HomeScreen = () => {
           style={{
             flex: 1,
             flexDirection: "row",
-            justifyContent: "flex-end",
-            paddingRight: "7%",
+            justifyContent: 'space-around'
           }}
         >
-          <TouchableOpacity
-            style={{ padding: "2%" }}
-            onPress={() => deleteCredential(data.name)}
-          >
-            <Delete set="bold" size="medium" primaryColor={Colors.red} />
-          </TouchableOpacity>
+
+          {CredentialsListCardButton("Edit", deleteCredential.bind(this), data.name, Colors.primary)}
+
+          {data?.password ? CredentialsListCardButton("Copy password", Clipboard.setString.bind(this), data.password, Colors.primary) : React.Fragment}
+
+          { !data?.password ? CredentialsListCardButton("Copy username", Clipboard.setString.bind(this), data.username, Colors.primary) : React.Fragment}
+
+          {CredentialsListCardButton("Delete", deleteCredential.bind(this), data.name, Colors.red)}
+
+
         </View>
       )}
     </TouchableOpacity>
@@ -250,11 +278,11 @@ const HomeScreen = () => {
       <View style={styles.savedAppsCredListContainer}>
         {!credentials?.length && <NoDataFound />}
         <FlatList
-          style={{ flex: 1 }}
+          style={{ flex: 1, padding: viewHeightPercent(2) }}
           data={credentials}
           keyExtractor={(item, index) => index}
           renderItem={({ item, separators }) => CredentialsListItem(item)}
-          scrollIndicatorInsets={{ right: 2 }}
+          scrollIndicatorInsets={{ right: 0, bottom: 40, top: 40 }}
           extraData={passwordVisibility}
         />
       </View>
@@ -296,8 +324,7 @@ const styles = StyleSheet.create({
     height: viewHeightPercent(75),
     width: "90%",
     backgroundColor: Colors.white,
-    borderRadius: viewHeightPercent(5),
-    padding: viewHeightPercent(2),
+    borderRadius: viewHeightPercent(3),
     top: heightPercentageToDP(12.5),
     alignSelf: "center",
     bottom: heightPercentageToDP(2),
