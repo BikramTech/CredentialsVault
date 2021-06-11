@@ -79,6 +79,7 @@ const AddCredentialsForm = ({
 
       if (homeRouteParams) {
         setSelectedApp(homeRouteParams);
+        setName(homeRouteParams.DisplayName)
       } else {
         clearHomeRouteParams();
         setSelectedApp(homeRouteParams);
@@ -364,7 +365,7 @@ const AddCredentialsForm = ({
 const styles = StyleSheet.create({
   formContainer: {
     paddingTop: viewHeightPercent(5),
-    marginHorizontal: viewWidthPercent(4),
+    marginHorizontal: viewWidthPercent(6),
     overflow: "scroll",
   },
 
@@ -384,7 +385,7 @@ const styles = StyleSheet.create({
 
     marginTop: viewHeightPercent(2),
     borderBottomColor: Colors.lightGray,
-    borderBottomWidth: 2,
+    borderBottomWidth: 1,
     ...Platform.select({
       android: {
         alignItems: "center",

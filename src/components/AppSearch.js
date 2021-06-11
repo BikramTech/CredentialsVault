@@ -76,6 +76,7 @@ const AppSearch = (props) => {
         {WebsiteLogo(website.Logo)}
         <View style={styles.appNameWrapper}>
             <Text >{website.DisplayName}</Text>
+            <Text >{website.Domain}</Text>
         </View></TouchableOpacity>
 
 
@@ -115,11 +116,14 @@ const styles = StyleSheet.create({
     },
 
     appNameWrapper: {
-        borderBottomWidth: 1,
+        borderBottomWidth: .3,
         borderBottomColor: Colors.silver,
         paddingVertical: '6%',
         width: '85%',
-        marginHorizontal: '2.5%'
+        marginHorizontal: '2.5%',
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 })
 

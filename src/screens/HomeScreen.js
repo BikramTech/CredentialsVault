@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { Show, Hide, Delete } from "react-native-iconly";
-import Clipboard from '@react-native-community/clipboard';
+import Clipboard from "@react-native-community/clipboard";
 
 import {
   viewHeightPercent,
@@ -47,11 +47,10 @@ const HomeScreen = () => {
   const getAllCredentials = () => {
     WebsitesDataDbService.GetCredentialsData()
       .then((resp) => {
-        console.log(resp);
         setCredentials(resp);
         setCredentialsSearchList(resp);
       })
-      .catch((err) => { });
+      .catch((err) => {});
   };
 
   const toggleBottomSheet = () => {
@@ -72,8 +71,12 @@ const HomeScreen = () => {
 
   const searchCredentials = (searchText) => {
     let searchTerm = searchText.toLowerCase();
-    return credentialsSearchList.filter(cred => cred.name.toLowerCase().indexOf(searchTerm) >= 0 || cred.username.toLowerCase().indexOf(searchTerm) >= 0);
-  }
+    return credentialsSearchList.filter(
+      (cred) =>
+        cred.name.toLowerCase().indexOf(searchTerm) >= 0 ||
+        cred.username.toLowerCase().indexOf(searchTerm) >= 0
+    );
+  };
 
   const clearSearchBox = () => {
     setSearchBoxTextValue("");
@@ -115,17 +118,23 @@ const HomeScreen = () => {
   };
 
   const onDeleteConfirm = () => {
-    WebsitesDataDbService.DeleteCredential(selectedCardId).then(resp => {
+    WebsitesDataDbService.DeleteCredential(selectedCardId)
+      .then((resp) => {
+        ToastAndroid.showWithGravity(
+          "Deleted Successfull!",
+          3000,
+          ToastAndroid.BOTTOM
+        );
 
-      ToastAndroid.showWithGravity("Deleted Successfull!", 3000, ToastAndroid.BOTTOM);
-
-      const filteredCredentials = credentials.filter(credential => credential.id !== selectedCardId);
-      setCredentials(filteredCredentials);
-      setSelectedCardId("");
-    }).catch(err => {
-      alert("Some error has occured");
-    })
-
+        const filteredCredentials = credentials.filter(
+          (credential) => credential.id !== selectedCardId
+        );
+        setCredentials(filteredCredentials);
+        setSelectedCardId("");
+      })
+      .catch((err) => {
+        alert("Some error has occured");
+      });
   };
 
   const onDeleteCancel = () => {
@@ -133,26 +142,34 @@ const HomeScreen = () => {
   };
 
   const getMaskedPasswordText = (passwordValue) => {
-
-    const maskedPasswordText = new Array(passwordValue.length).fill('•').join("");
-    return <Text style={{ fontWeight: "bold" }}>{maskedPasswordText}</Text>
-  }
-
+    const maskedPasswordText = new Array(passwordValue.length)
+      .fill("•")
+      .join("");
+    return <Text style={{ fontWeight: "bold" }}>{maskedPasswordText}</Text>;
+  };
 
   const copyToClipboard = (copiedText) => {
     Clipboard.setString(copiedText);
-    ToastAndroid.showWithGravity("Copied to clipboard!", 3000, ToastAndroid.BOTTOM);
-  }
+    ToastAndroid.showWithGravity("Password copied!", 3000, ToastAndroid.BOTTOM);
+  };
 
-  const CredentialsListCardButton = (textValue, onPressMethod, onPressArgs, textColor) => {
-
-    return <TouchableOpacity
-      style={{ padding: "2%" }}
-      onPress={() => onPressMethod(onPressArgs)}
-    >
-      <Text style={{ fontWeight: 'bold', color: textColor }}>{textValue}</Text>
-    </TouchableOpacity>
-  }
+  const CredentialsListCardButton = (
+    textValue,
+    onPressMethod,
+    onPressArgs,
+    textColor
+  ) => {
+    return (
+      <TouchableOpacity
+        style={{ padding: "2%" }}
+        onPress={() => onPressMethod(onPressArgs)}
+      >
+        <Text style={{ fontWeight: "bold", color: textColor }}>
+          {textValue}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
 
   const NoDataFound = () => (
     <Text
@@ -171,9 +188,9 @@ const HomeScreen = () => {
     <Image
       source={{ uri: logo }}
       style={{
-        height: viewHeightPercent(6),
-        width: viewHeightPercent(6),
-        borderRadius: viewHeightPercent(6) / 2,
+        height: viewHeightPercent(5),
+        width: viewHeightPercent(5),
+        borderRadius: viewHeightPercent(5) / 2,
       }}
       resizeMode="contain"
     ></Image>
@@ -183,8 +200,8 @@ const HomeScreen = () => {
     <TouchableOpacity
       style={{
         borderBottomColor: Colors.silver,
-        borderBottomWidth: 1,
-        paddingVertical: "3%",
+        borderBottomWidth: 0.3,
+        paddingVertical: "2%",
       }}
       onPress={() => toggleCredentialCardSelection(data.id)}
     >
@@ -197,7 +214,7 @@ const HomeScreen = () => {
 
         <View style={{ flex: 3, paddingLeft: "5%" }}>
           <Text
-            style={{ fontWeight: "900", fontSize: viewHeightPercent(1.9) }}
+            style={{ fontWeight: "bold", fontSize: viewHeightPercent(1.8) }}
           >
             {data.name}
           </Text>
@@ -205,24 +222,30 @@ const HomeScreen = () => {
           <View style={{ marginTop: "3%" }}>
             <Text>{data.username}</Text>
             {data.isPasswordVisible && <Text>{data.password}</Text>}
-            {!data.isPasswordVisible && data?.password ? getMaskedPasswordText(data.password) : React.Fragment}
+            {!data.isPasswordVisible && data?.password
+              ? getMaskedPasswordText(data.password)
+              : React.Fragment}
           </View>
         </View>
 
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-         { data?.password ? <TouchableOpacity
-            style={{ padding: "15%" }}
-            onPress={() => toggleCredentialsVisibility(data)}
-          >
-            {!data.isPasswordVisible && (
-              <Show set="bold" size="medium" primaryColor={Colors.primary} />
-            )}
-            {data.isPasswordVisible && (
-              <Hide set="bold" size="medium" primaryColor={Colors.primary} />
-            )}
-          </TouchableOpacity>: React.Fragment }
+          {data?.password ? (
+            <TouchableOpacity
+              style={{ padding: "15%" }}
+              onPress={() => toggleCredentialsVisibility(data)}
+            >
+              {!data.isPasswordVisible && (
+                <Show set="bold" size="medium" primaryColor={Colors.primary} />
+              )}
+              {data.isPasswordVisible && (
+                <Hide set="bold" size="medium" primaryColor={Colors.primary} />
+              )}
+            </TouchableOpacity>
+          ) : (
+            React.Fragment
+          )}
         </View>
       </View>
 
@@ -231,19 +254,40 @@ const HomeScreen = () => {
           style={{
             flex: 1,
             flexDirection: "row",
-            justifyContent: 'space-around'
+            justifyContent: "space-around",
           }}
         >
+          {CredentialsListCardButton(
+            "Edit",
+            deleteCredential.bind(this),
+            data.name,
+            Colors.primary
+          )}
 
-          {CredentialsListCardButton("Edit", deleteCredential.bind(this), data.name, Colors.primary)}
+          {data?.password
+            ? CredentialsListCardButton(
+                "Copy password",
+                copyToClipboard.bind(this),
+                data.password,
+                Colors.primary
+              )
+            : React.Fragment}
 
-          {data?.password ? CredentialsListCardButton("Copy password", copyToClipboard.bind(this), data.password, Colors.primary) : React.Fragment}
+          {!data?.password
+            ? CredentialsListCardButton(
+                "Copy username",
+                copyToClipboard.bind(this),
+                data.username,
+                Colors.primary
+              )
+            : React.Fragment}
 
-          { !data?.password ? CredentialsListCardButton("Copy username", copyToClipboard.bind(this), data.username, Colors.primary) : React.Fragment}
-
-          {CredentialsListCardButton("Delete", deleteCredential.bind(this), data.name, Colors.red)}
-
-
+          {CredentialsListCardButton(
+            "Delete",
+            deleteCredential.bind(this),
+            data.name,
+            Colors.red
+          )}
         </View>
       )}
     </TouchableOpacity>
@@ -284,7 +328,7 @@ const HomeScreen = () => {
       <View style={styles.savedAppsCredListContainer}>
         {!credentials?.length && <NoDataFound />}
         <FlatList
-          style={{ flex: 1, padding: viewHeightPercent(2) }}
+          style={{ flex: 1, padding: viewHeightPercent(1) }}
           data={credentials}
           keyExtractor={(item, index) => index}
           renderItem={({ item, separators }) => CredentialsListItem(item)}
@@ -328,11 +372,13 @@ const styles = StyleSheet.create({
   savedAppsCredListContainer: {
     position: "absolute",
     height: viewHeightPercent(75),
-    width: "90%",
+    width: "96%",
     backgroundColor: Colors.white,
     borderRadius: viewHeightPercent(3),
     top: heightPercentageToDP(12.5),
     alignSelf: "center",
+    display: "flex",
+    paddingBottom: "5%",
     bottom: heightPercentageToDP(2),
     ...Platform.select({
       android: {
