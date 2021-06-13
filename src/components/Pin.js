@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -11,6 +11,7 @@ import {
 import { CloseSquare } from "react-native-iconly";
 import { useNavigation } from "@react-navigation/native";
 
+import { UserPinService } from '../services';
 import { Colors, ScreenNames } from "../constants";
 import { viewHeightPercent, viewWidthPercent } from "../shared";
 
@@ -20,7 +21,22 @@ const Pin = () => {
   const [isLoadingPinBoxesVisible, setIsLoadingPinBoxesVisible] = useState(
     false
   );
+  const [doesUserPinExists, setDoesUserPinExists] = useState(false);
+  const [enteredUserPin, setEnteredUserPin] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
   const navigation = useNavigation();
+
+  useEffect(() => {
+    checkIfUserPinExists();
+  }, []);
+
+  const checkIfUserPinExists = async () => {
+    const userPin = await UserPinService.CheckIfUserPinExists();
+    if (userPin) {
+      setDoesUserPinExists(true);
+    }
+  }
 
   const pinInputBoxes = ["", "", "", ""];
 
@@ -61,23 +77,76 @@ const Pin = () => {
     ></Image>
   );
 
-  const onKeypadNumClick = (value) => {
+  const onKeypadNumClick = async (value) => {
+
+    setErrorMessage("");
+
     if (pinNumber?.length === 4) {
       return;
     }
 
     const updatedPinNumber = `${pinNumber}${value}`;
-    if (updatedPinNumber.length === 4) {
-      setIsLoadingPinBoxesVisible(true);
-      setTimeout(() => {
-        navigation.navigate(ScreenNames.home);
-        setIsLoadingPinBoxesVisible(false);
-        setPinNumber("");
-        clearTimeout();
-      }, 1000);
-    }
     setPinNumber(updatedPinNumber);
+
+    if (updatedPinNumber.length === 4) {
+
+      if (doesUserPinExists) {
+
+        setIsLoadingPinBoxesVisible(true);
+        const doesUserPinMatch = await UserPinService.CheckIfUserPinMatches(updatedPinNumber);
+
+        if (doesUserPinMatch) {
+          loginToApp();
+        }
+        else {
+          onPinLoginFailed("Incorrect PIN. Please try again.");
+        }
+
+      }
+      else {
+
+        if (enteredUserPin) {
+          setIsLoadingPinBoxesVisible(true);
+          confirmReEnteredPin(updatedPinNumber);
+        }
+        else {
+          setPinNumber("");
+          setEnteredUserPin(updatedPinNumber);
+        }
+
+      }
+
+    }
   };
+
+  const confirmReEnteredPin = (reEnteredPin) => {
+
+    if (enteredUserPin === reEnteredPin) {
+      UserPinService.SetUserPin(enteredUserPin);
+      loginToApp();
+    }
+    else {
+      onPinLoginFailed("Pins didn't match. Please try again.")
+    }
+
+  }
+
+  const loginToApp = () => {
+    setTimeout(() => {
+      navigation.navigate(ScreenNames.home);
+      setIsLoadingPinBoxesVisible(false);
+      setPinNumber("");
+      setEnteredUserPin("");
+      clearTimeout();
+    }, 500);
+  }
+
+  const onPinLoginFailed = (errMsg) => {
+    setIsLoadingPinBoxesVisible(false);
+    setPinNumber("");
+    setEnteredUserPin("");
+    setErrorMessage(errMsg);
+  }
 
   const onDeleteNumClick = () => {
     if (!pinNumber || !pinNumber.length) {
@@ -95,7 +164,11 @@ const Pin = () => {
 
       <View style={styles.topContainer}>
         {AppLogo()}
-        <Text style={styles.headerText}>Set Your PIN</Text>
+        {!doesUserPinExists && enteredUserPin?.length < 4 && <Text style={styles.headerText}>Set Your PIN</Text>}
+
+        {doesUserPinExists && <Text style={styles.headerText}>Enter Your PIN</Text>}
+
+        {!doesUserPinExists && enteredUserPin?.length === 4 && <Text style={styles.headerText}>Re-Enter Your PIN</Text>}
 
         <View
           style={{
@@ -108,40 +181,42 @@ const Pin = () => {
         >
           {!isLoadingPinBoxesVisible
             ? pinInputBoxes.length &&
-              pinInputBoxes.map((x, index) => (
-                <View
-                  key={index}
-                  style={{
-                    borderWidth: 2,
-                    borderColor: Colors.black,
-                    height: viewHeightPercent(2.5),
-                    width: viewHeightPercent(2.5),
-                    borderRadius: viewHeightPercent(2.5) / 2,
-                    marginHorizontal: "2.5%",
-                    backgroundColor:
-                      pinNumber.length > index
-                        ? Colors.graphiteBlack
-                        : Colors.white,
-                  }}
-                />
-              ))
+            pinInputBoxes.map((x, index) => (
+              <View
+                key={index}
+                style={{
+                  borderWidth: 2,
+                  borderColor: Colors.black,
+                  height: viewHeightPercent(2.5),
+                  width: viewHeightPercent(2.5),
+                  borderRadius: viewHeightPercent(2.5) / 2,
+                  marginHorizontal: "2.5%",
+                  backgroundColor:
+                    pinNumber.length > index
+                      ? Colors.graphiteBlack
+                      : Colors.white,
+                }}
+              />
+            ))
             : pinInputBoxes.length &&
-              pinInputBoxes.map((x, index) => (
-                <View
-                  key={index}
-                  style={{
-                    height: viewHeightPercent(2),
-                    width: viewHeightPercent(2),
-                    borderRadius: viewHeightPercent(2) / 2,
-                    marginHorizontal: "2.5%",
-                    backgroundColor:
-                      index === highlightedPinBox
-                        ? Colors.graphiteBlack
-                        : Colors.gray,
-                  }}
-                />
-              ))}
+            pinInputBoxes.map((x, index) => (
+              <View
+                key={index}
+                style={{
+                  height: viewHeightPercent(2),
+                  width: viewHeightPercent(2),
+                  borderRadius: viewHeightPercent(2) / 2,
+                  marginHorizontal: "2.5%",
+                  backgroundColor:
+                    index === highlightedPinBox
+                      ? Colors.graphiteBlack
+                      : Colors.gray,
+                }}
+              />
+            ))}
         </View>
+
+        {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : React.Fragment}
       </View>
 
       <View style={styles.bottomContainer}>
@@ -219,6 +294,12 @@ const styles = StyleSheet.create({
     fontWeight: "900",
     fontSize: viewHeightPercent(2.5),
     marginVertical: "5%",
+  },
+
+  errorText: {
+    fontSize: viewHeightPercent(1.5),
+    color: Colors.red,
+    marginVertical: "5%"
   },
 });
 

@@ -12,7 +12,7 @@ import {
   Alert,
   ToastAndroid,
 } from "react-native";
-import LinearGradient from "react-native-linear-gradient";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { Show, Hide, Delete } from "react-native-iconly";
 import Clipboard from "@react-native-community/clipboard";
 
@@ -40,8 +40,15 @@ const HomeScreen = () => {
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState("");
 
+  const navigation = useNavigation();
+
   useEffect(() => {
+    
     getAllCredentials();
+    
+    () => {
+
+    }
   }, []);
 
   const getAllCredentials = () => {
@@ -367,28 +374,32 @@ const styles = StyleSheet.create({
     padding: viewHeightPercent(2.7),
     backgroundColor: Colors.primary,
     justifyContent: "space-between",
+    alignItems: 'center'
   },
 
   savedAppsCredListContainer: {
     position: "absolute",
-    height: viewHeightPercent(75),
     width: "96%",
     backgroundColor: Colors.white,
     borderRadius: viewHeightPercent(3),
-    top: heightPercentageToDP(12.5),
     alignSelf: "center",
     display: "flex",
     paddingBottom: "5%",
-    bottom: heightPercentageToDP(2),
+
     ...Platform.select({
       android: {
+        top: heightPercentageToDP(12.5),
+        bottom: heightPercentageToDP(2),
         elevation: 8,
+        height: viewHeightPercent(75)
       },
       ios: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.8,
         shadowRadius: 1,
+        bottom: viewHeightPercent(5),
+        height: viewHeightPercent(80)
       },
     }),
   },
