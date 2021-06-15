@@ -3,14 +3,21 @@ import React, { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { ScreenNames } from "./src/constants";
-import { Home, AppSearch, Pin } from "./src/components";
+import { Home, AppSearch, Pin, SplashScreen } from "./src/components";
 
 const AppNavigation = () => {
   const { Screen, Navigator } = createStackNavigator();
 
   return (
     <NavigationContainer>
-      <Navigator initialRouteName={ScreenNames.pinScreen}>
+      <Navigator initialRouteName={ScreenNames.splashScreen}>
+
+      <Screen
+      name={ScreenNames.splashScreen}
+      component={SplashScreen.bind(this)}
+      options={{ headerShown: false}}
+      >
+      </Screen>
        
         <Screen
           name={ScreenNames.pinScreen}

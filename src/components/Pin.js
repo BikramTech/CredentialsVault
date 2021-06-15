@@ -68,10 +68,7 @@ const Pin = () => {
 
   const AppLogo = () => (
     <Image
-      source={{
-        uri:
-          "https://www.sdcard.org/cms/wp-content/uploads/2021/01/SD-Association-Logo_Blue_Vertical_CMYKl-01.png",
-      }}
+      source={require('../assets/images/AppLogo.png')}
       style={styles.appLogo}
       resizeMode="contain"
     ></Image>
@@ -286,8 +283,7 @@ const styles = StyleSheet.create({
 
   appLogo: {
     height: viewHeightPercent(7),
-    width: viewHeightPercent(7),
-    borderRadius: viewHeightPercent(7) / 2,
+    width: viewHeightPercent(7)
   },
 
   headerText: {
