@@ -4,7 +4,9 @@ import {
     Button,
     Dimensions,
     Image,
-    Text
+    Text,
+    View,
+    StatusBar
 } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 
@@ -42,10 +44,13 @@ const SplashScreen = () => {
 
     return (
 
-        <FadeInView style={{ justifyContent: "center", alignItems: 'center', height: viewHeightPercent(100), backgroundColor: Colors.white }}>
+        <FadeInView style={{  flex: 1, backgroundColor: Colors.white, padding: "10%" }}>
+            <StatusBar backgroundColor={Colors.white} />
+            <View style={{flex: 1, alignItems: 'center' ,justifyContent: 'flex-end', padding: '10%'}}>
 
-            <Image source={require('../assets/images/AppLogo.png')} style={{ height: viewWidthPercent(27), width: viewWidthPercent(90), resizeMode: 'contain' }} ></Image>
-
+             <Image source={require('../assets/images/AppLogo.png')} style={{ height: viewWidthPercent(27), width: viewWidthPercent(90), resizeMode: 'contain', position: 'absolute', top: '50%' }} ></Image> 
+             <Text style={{   fontWeight: '900', fontSize: viewHeightPercent(2.5)}}>Credentials Vault</Text>
+             </View>
         </FadeInView>
 
     );

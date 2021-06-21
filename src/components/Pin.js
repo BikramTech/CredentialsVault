@@ -29,6 +29,10 @@ const Pin = () => {
 
   useEffect(() => {
     checkIfUserPinExists();
+    
+    () => {
+      clearTimeout();
+    }
   }, []);
 
   const checkIfUserPinExists = async () => {
@@ -130,7 +134,7 @@ const Pin = () => {
 
   const loginToApp = () => {
     setTimeout(() => {
-      navigation.navigate(ScreenNames.home);
+      navigation.replace(ScreenNames.home);
       setIsLoadingPinBoxesVisible(false);
       setPinNumber("");
       setEnteredUserPin("");
