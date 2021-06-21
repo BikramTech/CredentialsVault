@@ -85,7 +85,6 @@ class BottomSheet extends React.Component {
         this.setState({ isFormSubmitButtonClicked: false});
         this.handleClose();
         this.props.onFormSubmissionSuccess();
-        ToastAndroid.showWithGravity("Saved successfully!", 3000, ToastAndroid.BOTTOM);
     }
 
     CancelButton = () => <TouchableOpacity style={styles.bottomSheetButtons} onPress={this.handleClose}>
@@ -140,10 +139,8 @@ const styles = StyleSheet.create({
         justifyContent:'space-between',
         margin: viewWidthPercent(1),
         backgroundColor:'white',
-        borderTopLeftRadius: viewHeightPercent(20),
+        borderTopLeftRadius: viewHeightPercent(3),
         borderTopRightRadius: viewHeightPercent(3),
-        borderBottomRightRadius: viewHeightPercent(10),
-        borderBottomLeftRadius: viewHeightPercent(3),
         zIndex: 1,
         elevation: 10
         },

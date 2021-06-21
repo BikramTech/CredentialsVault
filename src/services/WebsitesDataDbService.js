@@ -111,7 +111,7 @@ const WebsitesDataDbService = {
         return new Promise((resolve, reject) => {
             try {
                 db.transaction((tx) => {
-                    tx.executeSql(` Select credentials.*, website.Logo as logo from CredentialsData credentials inner Join Websites website on credentials.credentialsLogoId=website.Id`,
+                    tx.executeSql(` Select credentials.*, website.Logo as logo from CredentialsData credentials LEFT JOIN Websites website on credentials.credentialsLogoId=website.Id`,
                         null,
                         (tx, results) => {
                             const websites = results.rows.raw();

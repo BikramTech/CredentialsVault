@@ -39,13 +39,15 @@ const HomeScreen = () => {
   const [credentialsSearchList, setCredentialsSearchList] = useState([]);
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [selectedCardId, setSelectedCardId] = useState("");
+  const [isModalOpened, setIsModalOpened] = useState(false);
+  const [modalBoxMessage, setModalBoxMessage] = useState("");
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    
+
     getAllCredentials();
-    
+
     () => {
 
     }
@@ -57,8 +59,17 @@ const HomeScreen = () => {
         setCredentials(resp);
         setCredentialsSearchList(resp);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
+
+  const onCredentialsSavedSuccess = () => {
+    setModalBoxMessage("Saved successfully!");
+    setIsModalOpened(true);
+    getAllCredentials();
+    setTimeout(() => {
+      setIsModalOpened(false);
+    }, 1250);
+  }
 
   const toggleBottomSheet = () => {
     setIsBottomSheetOpen(!isBottomSheetOpen);
@@ -127,17 +138,19 @@ const HomeScreen = () => {
   const onDeleteConfirm = () => {
     WebsitesDataDbService.DeleteCredential(selectedCardId)
       .then((resp) => {
-        ToastAndroid.showWithGravity(
-          "Deleted Successfull!",
-          3000,
-          ToastAndroid.BOTTOM
-        );
+        setModalBoxMessage("Deleted successfully!");
+        setIsModalOpened(true);
+
+
 
         const filteredCredentials = credentials.filter(
           (credential) => credential.id !== selectedCardId
         );
         setCredentials(filteredCredentials);
         setSelectedCardId("");
+        setTimeout(() => {
+          setIsModalOpened(false);
+        }, 1250);
       })
       .catch((err) => {
         alert("Some error has occured");
@@ -191,8 +204,9 @@ const HomeScreen = () => {
     </Text>
   );
 
-  const CredentialLogo = (logo) => (
-    <Image
+  const CredentialLogo = (logo, userNameFirstLetter) => {
+
+    return logo ? <Image
       source={{ uri: logo }}
       style={{
         height: viewHeightPercent(5),
@@ -200,8 +214,17 @@ const HomeScreen = () => {
         borderRadius: viewHeightPercent(5) / 2,
       }}
       resizeMode="contain"
-    ></Image>
-  );
+    ></Image> :
+      <View style={{
+        height: viewHeightPercent(5),
+        width: viewHeightPercent(5),
+        borderRadius: viewHeightPercent(5) / 2,
+        backgroundColor: Colors.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+
+      }}><Text style={{ color: Colors.white, fontWeight: 'bold', fontSize: viewHeightPercent(1.5) }}>{userNameFirstLetter}</Text></View>
+  };
 
   const CredentialsListItem = (data) => (
     <TouchableOpacity
@@ -216,7 +239,7 @@ const HomeScreen = () => {
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
-          {CredentialLogo(data.logo)}
+          {CredentialLogo(data.logo, data.name[0])}
         </View>
 
         <View style={{ flex: 3, paddingLeft: "5%" }}>
@@ -251,8 +274,8 @@ const HomeScreen = () => {
               )}
             </TouchableOpacity>
           ) : (
-            React.Fragment
-          )}
+              React.Fragment
+            )}
         </View>
       </View>
 
@@ -273,20 +296,20 @@ const HomeScreen = () => {
 
           {data?.password
             ? CredentialsListCardButton(
-                "Copy password",
-                copyToClipboard.bind(this),
-                data.password,
-                Colors.primary
-              )
+              "Copy password",
+              copyToClipboard.bind(this),
+              data.password,
+              Colors.primary
+            )
             : React.Fragment}
 
           {!data?.password
             ? CredentialsListCardButton(
-                "Copy username",
-                copyToClipboard.bind(this),
-                data.username,
-                Colors.primary
-              )
+              "Copy username",
+              copyToClipboard.bind(this),
+              data.username,
+              Colors.primary
+            )
             : React.Fragment}
 
           {CredentialsListCardButton(
@@ -349,10 +372,26 @@ const HomeScreen = () => {
           isOpen={isBottomSheetOpen}
           toggleBottomSheet={toggleBottomSheet}
           ContainerComponent={AddCredentialsForm}
-          onFormSubmissionSuccess={getAllCredentials}
+          onFormSubmissionSuccess={onCredentialsSavedSuccess}
         />
       )}
       <StatusBar backgroundColor={Colors.primary} />
+
+      {isModalOpened ?
+        <View style={styles.modalUnderlay}>
+
+          <Image
+            source={require('../assets/images/animated-tick.gif')}
+            style={{
+              height: viewHeightPercent(25),
+              width: viewHeightPercent(25)
+            }}
+            resizeMode="contain"
+          ></Image>
+          <Text style={{ position: 'absolute', top: viewHeightPercent(55.5), fontWeight: 'bold', fontSize: viewHeightPercent(1.7) }}>{modalBoxMessage}</Text>
+        </View> : React.Fragment}
+
+
     </View>
   );
 };
@@ -431,6 +470,17 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: viewHeightPercent(3),
     borderRadius: viewHeightPercent(1),
   },
+
+  modalUnderlay: {
+    position: 'absolute',
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,.5)",
+    zIndex: 1,
+    width: viewWidthPercent(100),
+    height: viewHeightPercent(100),
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
 });
 
 export default HomeScreen;
